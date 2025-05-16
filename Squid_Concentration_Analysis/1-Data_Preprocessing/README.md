@@ -9,7 +9,7 @@ This folder contains all the raw and processed data used for the Squid_Concentra
 	--Raw output files from LC-MS (Liquid Chromatography–Mass Spectrometry)
 	--R scripts used to clean, process, and structure the data
 	--Cleaned and merged raw datasets with biological and environmental data
-	--Calculated standard concentrations (LOD and LOQ) for sample concentration calculation			-[View Data Processing Workflow PDF](Squid_Fest/Squid_Concentration_Analysis/Appendix)
+	--Calculated standard concentrations (LOD and LOQ) for sample concentration calculation					- [View Data Processing Workflow PDF](Squid_Fest/Squid_Concentration_Analysis/Appendix)
 
 
 📂 Folder Contents
