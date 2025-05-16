@@ -4,11 +4,11 @@ Overview 🎯
 The goal of this stage was to transform raw instrumental outputs into clean, biologically contextualized datasets. These processed files were then used for downstream statistical modelling, ecological interpretation, and temporal analysis.
 
 This folder contains all the raw and processed data used for the Squid_Concentration_Analysis project's chemical analysis pipeline, including:
-	* Raw output files from ICP-MS (Inductively Coupled Plasma Mass Spectrometry) for trace metals <br>
-	* Raw output files from LC-MS (Liquid Chromatography–Mass Spectrometry)
-	* R scripts used to clean, process, and structure the data
-	* Cleaned and merged raw datasets with biological and environmental data
-	* Calculated standard concentrations (LOD and LOQ) for sample concentration calculation					- [View Data Processing Workflow PDF](Squid_Fest/Squid_Concentration_Analysis/Appendix)
+&nbsp;&nbsp;&nbsp;&nbsp;* Raw output files from ICP-MS (Inductively Coupled Plasma Mass Spectrometry) for trace metals <br>
+&nbsp;&nbsp;&nbsp;&nbsp;* Raw output files from LC-MS (Liquid Chromatography–Mass Spectrometry) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;* R scripts used to clean, process, and structure the data <br>
+&nbsp;&nbsp;&nbsp;&nbsp;* Cleaned and merged raw datasets with biological and environmental data <br>
+&nbsp;&nbsp;&nbsp;&nbsp;* Calculated standard concentrations (LOD and LOQ) for sample concentration calculation <br>	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [View Data Processing Workflow PDF](Squid_Fest/Squid_Concentration_Analysis/Appendix)
 
 
 📂 Folder Contents
