@@ -1,50 +1,42 @@
-## 🧪 Temporal Variations in Chemical Concentrations 📈🧬📊
+## ⚖️ Human Health Risk Assessment 🧍🍽️🦑
 
 ### Overview 🎯  
-This stage focused on investigating how chemical pollutant concentrations in squid tissues vary over time. It addresses one of the core hypotheses of the thesis: **do temporal patterns reveal significant shifts in exposure or accumulation?** The analysis integrates statistical testing, biological relevance, and environmental context to assess annual concentration differences across multiple tissues and elements.
+This stage evaluates the potential health risks associated with consuming **Illex argentinus**, a cephalopod species that forms a growing part of global seafood diets—particularly in South America and Asia. Given the bioaccumulative nature of toxic contaminants in marine organisms, this module estimates **daily human exposure levels** to metals and organic compounds via squid consumption. Using pollutant concentration data, country-specific consumption rates, and oral reference doses (RfDs), **Estimated Daily Intakes (EDIs)** and **Hazard Quotients (HQs)** were calculated for both average and high-exposure scenarios. The work integrates toxicological benchmarks with real-world dietary behavior to assess human risk.
 
-This folder contains datasets, plotting icons, and R scripts used to:  
-- **Run temporal statistical comparisons across years**  
-- **Visualize concentration trends per tissue and compound**  
-- **Assess exceedance against recommended safety thresholds**  
-- **Interactively preprocess data with user-defined filtering and imputation settings**
+---
+
+### 📁 Folder Contains:
+_(To be completed later)_
 
 ---
 
 ### 🎓 Skills & Techniques Demonstrated  
-<<<<<<< HEAD
 
-- **🧼 Flexible Data Preparation**  
-  Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
-  * Options included keeping or removing LOQ values, or imputing them as ⅓ LOQ, offering flexibility in sensitivity analysis.
+- **📉 Toxicological Risk Quantification**  
+  Estimated dietary exposure levels using population-specific intake models.  
+  * Calculated EDIs using pollutant concentrations, annual consumption rates, and body weight data from Argentina and Taiwan.  
+  * Derived Hazard Quotients (HQ = EDI / RfD) to assess exceedance of safe intake thresholds.
 
-- **🧪 Statistical Testing for Temporal Trends**  
-  Applied appropriate statistical tests to evaluate year-on-year pollutant variations in each tissue.  
-  * Used Shapiro-Wilks to test normality and chose between ANOVA or Kruskal-Wallis based on distribution, followed by Tukey or Dunn post hoc comparisons.
+- **🧮 Quantitative Modeling & Custom Formula Derivation**  
+  Adapted and implemented published risk equations for cephalopod-specific dietary scenarios.  
+  * Formulas customized from existing frameworks (Sala et al., 2022) to integrate local consumption and landings data.
 
-- **📊 Visualizing Annual Concentration Changes**  
-  Designed multi-bar plots to visualize pollutant trends across years for each tissue.  
-  * Bar plots grouped tissues on the x-axis, with bars representing different years and y-axis showing mean concentration levels.
+- **🌍 Interdisciplinary Integration of Environmental and Public Health Data**  
+  Combined environmental pollution data, fishery statistics, and toxicological references into a unified risk model.  
+  * Pulled data from multiple international and national sources (FAO, US EPA, Ministry of Health, etc.).
 
-- **⚠️ Risk Benchmarking with Toxicological Thresholds**  
-  Incorporated toxicological reference data into visualizations to flag exceedances.  
-  * Used a curated dataframe of recommended maximum concentrations and oral reference doses (RfDs) from published studies to overlay risk thresholds on plots.
-=======
-- **🧪 Statistical Testing for Temporal Trends**  
-  Applied appropriate statistical tests to evaluate year-on-year pollutant variations in each tissue.  
-  * Used Shapiro-Wilks to test normality and chose between ANOVA or Kruskal-Wallis based on distribution, followed by Tukey or Dunn post hoc comparisons.
+- **📊 Percentile-Based Exposure Scenarios**  
+  Assessed variability in population risk by calculating both mean and 95th percentile exposure values.  
+  * Enabled insights into both typical and high-risk consumption behaviors.
 
-- **📊 Visualizing Annual Concentration Changes**  
-  Designed multi-bar plots to visualize pollutant trends across years for each tissue.  
-  * Bar plots grouped tissues on the x-axis, with bars representing different years and y-axis showing mean concentration levels.
+- **📚 Research & Literature Synthesis**  
+  Incorporated RfDs from peer-reviewed studies and government agencies for metals and organic compounds.  
+  * Recognized knowledge gaps where oral reference doses were unavailable, documenting limitations transparently.
 
-- **⚠️ Risk Benchmarking with Toxicological Thresholds**  
-  Incorporated toxicological reference data into visualizations to flag exceedances.  
-  * Used a curated dataframe of recommended maximum concentrations and oral reference doses (RfDs) from published studies to overlay risk thresholds on plots.
+- **💬 Communication of Scientific Uncertainty**  
+  Framed risk estimates in terms of relative exceedance, consumer exposure levels, and regulatory thresholds to aid interpretation by non-specialist stakeholders.
 
-- **📈 Enhancing Interpretability Through Icons and Annotation**  
-  Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
->>>>>>> a382c75fec7273adddaab90ea914eb8e1d52d500
+---
 
 - **📈 Enhancing Interpretability Through Icons and Annotation**  
   Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
