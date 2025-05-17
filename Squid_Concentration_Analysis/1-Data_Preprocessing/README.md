@@ -1,4 +1,4 @@
-##🧪 Data Preprocessing 🧼📊🦑 <br><br>
+## 🧪 Data Preprocessing 🧼📊🦑 <br><br>
 
 ### Overview 🎯 <br>
 The goal of this stage was to transform raw instrumental outputs into clean, biologically contextualized datasets. These processed files were then used for downstream statistical modelling, ecological interpretation, and temporal analysis. <br><br>
@@ -12,15 +12,15 @@ This folder contains all the raw and processed data used for the Squid_Concentra
 [View Data Processing Workflow for more details](../Appendix/Data_processing_workflow.pdf) <br><br>
 
 ### 📂 Folder Contents <br> 
-	&nbsp;&nbsp;&nbsp;&nbsp;* Raw_data : Contains raw CSV outputs from ICP-MS and LC-MS instruments <br> 
-	&nbsp;&nbsp;&nbsp;&nbsp;* Output data: Contains cleaned, unit-converted datasets, with flagged LOD/LOQ values <br> 
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Final_Results_For_Analysis <br> 
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Datasets/Cleaned_Data <br> 
-	&nbsp;&nbsp;&nbsp;&nbsp;* R scripts: For data processing <br> 
-	&nbsp;&nbsp;&nbsp;&nbsp;* Metadata: sample biological and environmental variables merged to processed data <br> 
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Squid_Catch_Data <br><br>
+- **Raw_data**: Contains raw CSV outputs from ICP-MS and LC-MS instruments  
+- **Output data**: Contains cleaned, unit-converted datasets, with flagged LOD/LOQ values  
+  - Final_Results_For_Analysis  
+  - Datasets/Cleaned_Data  
+- **R scripts**: For data processing  
+- **Metadata**: Sample biological and environmental variables merged to processed data  
+  - Squid_Catch_Data
 
-###🎓 Skills & Techniques Demonstrated <br> 
+### 🎓 Skills & Techniques Demonstrated <br> 
 **🔬 Translating Lab Outputs into Meaningful Data** <br> 
 Converted raw LC-MS and ICP-MS readings into dry-weight concentrations by applying calibration logic and unit conversions based on scientific standards. <br><br>
 
