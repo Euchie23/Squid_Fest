@@ -32,6 +32,7 @@ _(To be completed later)_
 - **📚 Research & Literature Synthesis**  
   Incorporated RfDs from peer-reviewed studies and government agencies for metals and organic compounds.  
   * Recognized knowledge gaps where oral reference doses were unavailable, documenting limitations transparently.
+     - [Human_Risk_Assessments_Limitations](../Appendix/Human_Risk_Assessments_Limitations.pdf)
 
 - **💬 Communication of Scientific Uncertainty**  
   Framed risk estimates in terms of relative exceedance, consumer exposure levels, and regulatory thresholds to aid interpretation by non-specialist stakeholders.
