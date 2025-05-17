@@ -12,11 +12,6 @@ This folder contains datasets, plotting icons, and R scripts used to:
 ---
 
 ### 🎓 Skills & Techniques Demonstrated  
-
-- **🧼 Flexible Data Preparation**  
-  Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
-  * Options included keeping or removing LOQ values, or imputing them as ⅓ LOQ, offering flexibility in sensitivity analysis.
-
 - **🧪 Statistical Testing for Temporal Trends**  
   Applied appropriate statistical tests to evaluate year-on-year pollutant variations in each tissue.  
   * Used Shapiro-Wilks to test normality and chose between ANOVA or Kruskal-Wallis based on distribution, followed by Tukey or Dunn post hoc comparisons.
