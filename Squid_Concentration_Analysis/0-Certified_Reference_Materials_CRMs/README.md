@@ -13,7 +13,7 @@ Includes digestion protocol, calibration setup, and recovery calculations. <br>
 No CRM used, but literature-based validation steps are discussed. <br>
 \*\*\***For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward***\*\* <br>
 
-📁 Below are the files that the Appendix folder contains pertaining to the CRM section<br>
+📁 Below are the files that the Appendix folder contains pertaining to the CRM and methodology section<br>
 - **Instrument parameters**
   - [Instrument Parameters for ICP-MS](../Appendix/Trace_Metals/Instrument_Parameter.pdf)
   - [Instrument Parameters for LC-MS](../Appendix/Organic_compounds/Instrument_Parameters.pdf)
