@@ -37,6 +37,7 @@ The Squid Fest folder contains two projects resulting from a series of interdisc
     Task-2-Detectiion_summary
     Task-3-Data_mining
     Task-4-Temporal_variations_in_Chemical Concentrations
+    Task-5-Human_Health_Risk
     Appendix
 
 ### 🦑📊 Squid_Stock_Assessment 📈 🦑<br>
