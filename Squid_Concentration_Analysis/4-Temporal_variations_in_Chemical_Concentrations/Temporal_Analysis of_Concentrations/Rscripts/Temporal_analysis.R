@@ -8,12 +8,231 @@ library(rcompanion) # For Compact Letter Displays
 library(agricolae)  # For Tukey HSD compact letter displays
 
 
+#Data Processor Function before doing analysis
+process_dataset <- function(data, keep_LOQ_values=FALSE) {
+  # Check if the dataset is Trace Metals (Ag is in the 16th column)
+  if (grepl("Metal", colnames(data)[16])) {
+    
+    # Processing for Trace Metals dataset
+    data <- data %>%
+      relocate(1:15, colnames(data)[16:25]) %>%
+      mutate(across(4, ~ paste0(., ".")))  # Add "." to column 4
+    
+    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (TM)
+    ID_num_modifier <- function(x){#padding 0 to first two digits
+      if (str_detect(substring(x[4],1,2),"\\.") == TRUE){ 
+        sk=paste('0',substring(x[4],1,))
+        sk<- gsub(" ", "",  sk)
+        x[4] <- gsub(substring(x[4],1,), sk,  x[4])
+      }
+      return(x)
+    }
+    
+    # Apply the 'ID_num_modifier' function and remove "." from the 'Area' column
+    data <- as.data.frame(t(apply(data, MARGIN = 1, ID_num_modifier)))
+    data$ID_num <- gsub("\\.", "", data$ID_num)
+    
+    if(keep_LOQ_values == FALSE){
+      cat("The LOQ values were replaced with 0.\n")
+      # Replace "BLOQ" values with 0 in the relevant columns (16:25)
+      data[, 16:25] <- lapply(data[, 16:25], gsub, pattern = ".*BLOQ.*", replacement = 0)
+      data[,c(16:25)] <- lapply(data[,c(16:25)], gsub, pattern = ".*BB.*", replacement = 0)
+      data[,c(16:25)] <- lapply(data[,c(16:25)], gsub, pattern = "^0$", replacement = 0)
+      data[,c(16:25)]  <- lapply(data[,c(16:25)] , gsub, pattern = "N/A", replacement = 0)
+      return(data)
+      
+    }else{
+      # Removing "BLOQ" and "BB" values in the relevant columns (16:25)
+      data[, 16:25] <- lapply(data[, 16:25], gsub, pattern = " BLOQ", replacement = "")
+      data[,c(16:25)] <- lapply(data[,c(16:25)], gsub, pattern = " BB", replacement = "")
+      data[,c(16:25)] <- lapply(data[,c(16:25)], gsub, pattern = "^0$", replacement = 0)
+      data[,c(16:25)]  <- lapply(data[,c(16:25)] , gsub, pattern = "N/A", replacement = 0)
+      
+      process_with_user_input <- function() {
+        # Ask the user if they want to keep LOQ values
+        keep_loq <- readline(prompt = "Do you want to keep the original LOQ values? (yes/no): ")
+        
+        if (tolower(keep_loq) == "yes") {
+          cat("You chose to keep LOQ values.\n")
+          return("Keep LOQ") # Return a clear message indicating the choice
+        } else if (tolower(keep_loq) == "no") {
+          multiplier <- NA
+          
+          while (is.na(multiplier)) {
+            user_input <- readline(prompt = "What number do you want to multiply the LOQ values by? ")
+            multiplier <- suppressWarnings(as.numeric(user_input))
+            
+            if (is.na(multiplier)) {
+              cat("Invalid input. Please enter a numeric value.\n")
+            }
+          }
+          
+          cat("You chose a multiplier of ", multiplier, ".\n")
+          return(multiplier) # Return the chosen multiplier
+        } else {
+          cat("Invalid input. Please answer with 'yes' or 'no'.\n")
+          return(NULL) # Return NULL for invalid input
+        }
+      }
+      
+      # To get user input for 
+      user_choice <- process_with_user_input()
+      
+      # Modify "BLOQ" and "BB" values with userinput in the relevant columns (16:25)
+      process_data <- function(data, multiplier) {
+        # Validate user input
+        if (is.na(multiplier)) {
+          stop("Invalid multiplier. Please enter a numeric value.")
+        }
+        
+        # Process the data
+        data[, 16:25] <- lapply(data[, 16:25], function(column) {
+          # Replace " BLOQ" and " BB" with empty strings
+          cleaned_column <- gsub(" BLOQ", "", column)
+          cleaned_column <- gsub(" BB", "", cleaned_column)
+          
+          # Convert to numeric
+          numeric_column <- as.numeric(cleaned_column)
+          
+          # Multiply by the user input
+          if (is.numeric(multiplier)){
+            result_column <- numeric_column * multiplier
+            return(result_column)
+          }else{
+            return (numeric_column)
+          }
+          
+        })
+        
+        # Return the updated dataset
+        return(data)
+      }
+      data <-process_data(data, user_choice)
+      return(data)
+    }
+    
+  } else {
+    # Processing for Organic Compounds dataset
+    data <- data %>%
+      relocate(Area, .after = ID_num) %>%
+      mutate(across(4, ~ paste0(., ".")))  # Add "." to column 4
+    
+    # Convert column 6 to lowercase
+    data[, 6] <- tolower(data[, 6])
+    
+    
+    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (TM)
+    ID_num_modifier <- function(x){#padding 0 to first two digits
+      if (str_detect(substring(x[4],1,2),"\\.") == TRUE){ 
+        sk=paste('0',substring(x[4],1,))
+        sk<- gsub(" ", "",  sk)
+        x[4] <- gsub(substring(x[4],1,), sk,  x[4])
+      }
+      return(x)
+    }
+    
+    # Apply the 'dcc' function and remove "." from the 'Area' column
+    data <- as.data.frame(t(apply(data, MARGIN = 1, ID_num_modifier)))
+    data$ID_num <- gsub("\\.", "", data$ID_num)
+    
+    if(keep_LOQ_values == FALSE){
+      cat("The LOQ values were replaced with 0.\n")
+      # Replace "BLOQ", "N/A", and "0" values with 0 in the relevant columns (16:19)
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = ".*BLOQ.*", replacement = 0)
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = "N/A", replacement = 0)
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = "^0$", replacement = 0)
+      return(data)
+      
+    }else{
+      # Removing "BLOQ" and  values in the relevant columns (16:19)
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = " BLOQ", replacement = "")
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = "N/A", replacement = 0)
+      data[, 16:19] <- lapply(data[, 16:19], gsub, pattern = "^0$", replacement = 0)
+      
+      process_with_user_input <- function() {
+        # Ask the user if they want to keep LOQ values
+        keep_loq <- readline(prompt = "Do you want to keep LOQ values? (yes/no): ")
+        
+        if (tolower(keep_loq) == "yes") {
+          cat("You chose to keep LOQ values.\n")
+          return("Keep LOQ") # Return a clear message indicating the choice
+        } else if (tolower(keep_loq) == "no") {
+          multiplier <- NA
+          
+          while (is.na(multiplier)) {
+            user_input <- readline(prompt = "What number do you want to multiply the LOQ values by? ")
+            multiplier <- suppressWarnings(as.numeric(user_input))
+            
+            if (is.na(multiplier)) {
+              cat("Invalid input. Please enter a numeric value.\n")
+            }
+          }
+          
+          cat("You chose a multiplier of ", multiplier, ".\n")
+          return(multiplier) # Return the chosen multiplier
+        } else {
+          cat("Invalid input. Please answer with 'yes' or 'no'.\n")
+          return(NULL) # Return NULL for invalid input
+        }
+      }
+      
+      # To get user input for 
+      user_choice <- process_with_user_input()
+      
+      # Modify "BLOQ" and "BB" values with userinput in the relevant columns (16:25)
+      process_data <- function(data, multiplier) {
+        # Validate user input
+        if (is.na(multiplier)) {
+          stop("Invalid multiplier. Please enter a numeric value.")
+        }
+        
+        # Process the data
+        data[, 16:19] <- lapply(data[, 16:19], function(column) {
+          # Replace " BLOQ" and " BB" with empty strings
+          cleaned_column <- gsub(" BLOQ", "", column)
+          #cleaned_column <- gsub(" BB", "", cleaned_column)
+          
+          # Convert to numeric
+          numeric_column <- as.numeric(cleaned_column)
+          
+          # Multiply by the user input
+          if (is.numeric(multiplier)){
+            result_column <- numeric_column * multiplier
+            return(result_column)
+          }else{
+            return (numeric_column)
+          }
+          
+        })
+        
+        # Return the updated dataset
+        return(data)
+      }
+      data <-process_data(data, user_choice)
+      return(data)
+    }
+  }
+} 
+
+
+# NOTE FOR THE BELOW FUNCTIONS:
+#If you choose FALSE for "keep_LOQ_values", it will be replaced with 0, then removed later in the data analysis based on the user's input, when asked if you want to to keep the original LOQ values if you choose "Yes" it keeps the original values, if no it asks for a multiplier. This is because some researchers use half or maybe quarter of the LOQ values when running the analysis.
+
+# Data Processing for Trace Metals dataset
+tracemetals_data <- read.csv("Squid_Concentration_Analysis/3-Data_Mining/Datasets/preprocessed_data/Final_TMresults_mgkg.csv", header = TRUE)
+processed_tm_data <- process_dataset(tracemetals_data, keep_LOQ_values = TRUE) 
+
+# Data Processing for Organic Compounds dataset
+oc_data <- read.csv("Squid_Concentration_Analysis/3-Data_Mining/Datasets/preprocessed_data/Final_OCresults_mgkg.csv", header = TRUE)
+processed_oc_data <- process_dataset(oc_data, keep_LOQ_values = TRUE)
+
+
 #FUNCTIONS FOR PROCESSING DATA----
 
 #Step 1----
 temporal_analysis_step1 <- function(data, remove_zeroes = FALSE) {
   # Determine the range of columns to process
-  if (grepl("Fe|Ag", colnames(data)[16])) {
+  if (grepl("Metal", colnames(data)[16])) {
     pollutants <- colnames(data)[16:25]
   } else {
     pollutants <- colnames(data)[16:19]
@@ -133,7 +352,7 @@ temporal_analysis_step1 <- function(data, remove_zeroes = FALSE) {
   )
 } #This function processes the data to give the normality test results, summary statistics for each pollutant and manipulating the dataset from wide to long structure.
 
-temporal_analysis_step1 <-temporal_analysis_step1(processed_hm_data) #Run Function #1
+temporal_analysis_step1 <-temporal_analysis_step1(processed_tm_data) #Run Function #1
 
 
 
@@ -190,7 +409,7 @@ temporal_analysis_step2 <- function(data_list, remove_zeroes = FALSE) {
       # Check if Shapiro-Wilk test failed, indicating non-normality
       if (any(data$TestResult == "Fail")) {
         
-        print(paste("I am in running KW.TEST for", pollutant, tissue))
+        print(paste("I am running KW.TEST for", pollutant, tissue))
         
         # Perform Kruskal-Wallis test for non-normal data
         group_comparison_tests <- kruskal.test(Concentration ~ interactions, data = subset_long)
@@ -237,7 +456,7 @@ temporal_analysis_step2 <- function(data_list, remove_zeroes = FALSE) {
        
       } else if (any(data$TestResult != "Fail") & any(data$TestResult == "Pass")){
         
-        print(paste("I am in running ANOVA for", pollutant, tissue))
+        print(paste("I am running ANOVA for", pollutant, tissue))
         
         # Perform ANOVA for normally distributed data
         group_comparison_tests <- aov(Concentration ~ interactions, data = subset_long)
@@ -371,15 +590,15 @@ plots_list <- list()
 plot_names <- c()
 
 
-if(grepl("Fe|Ag", pollutant_name)) { # if Fe or Ag is detected  as the name of the frist dataset in the list then run the below code fro heavy metals.
-  filename <- "HMicons//" # heavy metal file containing icons for classification
-  #recommended levels for heavy metals and organic compounds in mg/kg accumulated from different datasets:
-  recommended_levels <- data.frame(pollutants=c("Ag","Cd","Co","Cu","Fe","Hg","Ni","Pb","Tl","Zn"), 
+if(grepl("Metal", pollutant_name)) { # if Metal is detected  as the name of the first dataset in the list then run the below code fro trace metals.
+  filename <- "TMicons//" # trace metal file containing icons for classification
+  #recommended levels for trace metals and organic compounds in mg/kg accumulated from different datasets:
+  recommended_levels <- data.frame(pollutants=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E"), 
                    lower_recommended_levels=c(0.01,2,0.0016,30,100,0.1,0.05,8,0.45,30), upper_recommended_levels=c(rep(NA, 10)), 
                    levels=c('Grasso et al. 2021: 0.01mg/kg','FAO/WHO: <0.05-2mg/kg','EFSA: 0.0016mg/kg','ANVISA: 30mg/kg', 'FAO/WHO: 100mg/kg','Brodziak-Dopierała et al. 2023: 0.1mg/kg','FAO/WHO: <0.05-2mg/kg','FAO/WHO: <0.5-8mg/kg','Makridis and Amberger, 1996; LaCoste et al. 2001:\n <0.45-2.28mg/kg (permissible range for animal feed)','FAO/WHO: <30-100mg/kg'),oral_reference_dosage=c(0.005, 0.01, 0.03, 0.04, 0.7, 0.1, 0.003, 0.04,0.00001, 0.3))
-}else{ # if Fe or Ag is not detected  as the name of the first dataset in the list then run the below code for organic compounds.
+}else{ # if "Metal" is not detected  as the name of the first dataset in the list then run the below code for organic compounds.
   filename <- "OCicons//" # Organic compound file containing icons for classification
-  recommended_levels <- data.frame(pollutants=c("Adipic_acid","Caprolactam","Chlorpyrifos","Ibuprofen"), lower_recommended_levels=c(470, 50,0.01,40), upper_recommended_levels=c(NA, NA,NA,NA), levels=c('EPA: 470mg/kg/day','EPA: 50mg/kg/day', 'FAO/WHO: 0.01mg/kg/day','The Mayo Clinic: 40mg/kg/day'))
+  recommended_levels <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), lower_recommended_levels=c(470, 50,0.01,40), upper_recommended_levels=c(NA, NA,NA,NA), levels=c('EPA: 470mg/kg/day','EPA: 50mg/kg/day', 'FAO/WHO: 0.01mg/kg/day','The Mayo Clinic: 40mg/kg/day'))
 }
 
 
@@ -404,7 +623,7 @@ if(grepl("Fe|Ag", pollutant_name)) { # if Fe or Ag is detected  as the name of t
     #creating a vector of the years for each summary statititc dataset to be used for plotting later
     years <- levels(factor(summary_statistics_per_pollutant$Year))
     
-#Dynamic Plot Annotations used for pollutant classification. This piece of R code is checking for the existence of a PNG image file in the HMicons or OCicons folder. If the file exists,it reads it and processes it as a graphical object. If it doesnt exist it sets 'icon' to FALSE indicating that no image is available. Some pollutants for example Hg may have multiple classifications like pharmaceuticals, industry etc. hence why we have mutlpile icons as indicated by "1" and "2" in the following code.
+#Dynamic Plot Annotations used for pollutant classification. This piece of R code is checking for the existence of a PNG image file in the TMicons or OCicons folder. If the file exists,it reads it and processes it as a graphical object. If it doesnt exist it sets 'icon' to FALSE indicating that no image is available. Some pollutants for example Metal_H may have multiple classifications like pharmaceuticals, industry etc. hence why we have mutlpile icons as indicated by "1" and "2" in the following code.
 if(file.exists(paste0(filename,contaminant,".png"))==TRUE){
   icon <- file.exists(paste0(filename,contaminant,".png"))
   icons = png::readPNG(paste0(filename,contaminant,".png")) %>%
@@ -485,7 +704,7 @@ temporal_analysis_step3 <- temporal_analysis_step3 (temporal_analysis_step2) #Ru
 
 
 # Calling plots for visualization from saved list in the temporal_analysis_step3_dataset.----
-do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5, 6, 7,8,9,10)], ncol=5)) #Heavy Metals
+do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5, 6, 7,8,9,10)], ncol=5)) #Trace Metals
 
 do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5,7,10)], ncol=4)) #Organic Compounds
 
