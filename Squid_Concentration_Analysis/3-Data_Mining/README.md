@@ -15,11 +15,11 @@ This folder contains R scripts and analytical outputs:
 
 - **🔍 Biological Pattern Detection**  
   Learned how to use correlation analysis to test hypotheses about pollutant accumulation across biological size classes and how imputation choices affect results.  
-  &nbsp;&nbsp;&nbsp;&nbsp;* Spearman correlation tests were run to examine whether squid size (categorized by mantle length) influenced pollutant levels, analyzing both filtered and imputed datasets to assess sensitivity to BLOD/BLOQ values.
+  &nbsp;&nbsp;&nbsp;&nbsp;* Spearman correlation tests were run to examine whether squid size    (categorized by mantle length) influenced pollutant levels, analyzing both filtered    and imputed datasets to assess sensitivity to BLOD/BLOQ values.
 
 - **📊 Comparative Analysis**  
   Applied statistical tests to evaluate pollutant differences by gender and uncover biologically relevant temporal trends.  
-  &nbsp;&nbsp;&nbsp;&nbsp;* Tests included Kruskal-Wallis, t-tests, ANOVA, Shapiro-Wilks, and Mann-Whitney methods across and within years.
+  &nbsp;&nbsp;&nbsp;&nbsp;* Tests included Kruskal-Wallis, t-tests, ANOVA, Shapiro-Wilks,    and Mann-Whitney methods across and within years.
 
 - **📅 Temporal Modeling**  
   Used linear regression models to assess how variables such as gender, month, latitude, distance to land, and maturity influenced pollutant levels across years and tissues.  
