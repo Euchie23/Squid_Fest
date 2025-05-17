@@ -3,9 +3,7 @@
 ### Overview 🎯  
 This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, test hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on how factors such as gender, size, year, and tissue type influence pollutant distributions in squid.
 
-### 📁 Folder Includes  
-This folder contains R scripts and analytical outputs used to explore relationships within the pollutant concentration data, including:
-
+The Folder includes: <br>
 - **Size-Based Correlation Analysis**  
 &nbsp;&nbsp;&nbsp;&nbsp;* Spearman correlation tests examining the relationship between squid size (categorized by mantle length) and pollutant levels.
 
