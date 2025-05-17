@@ -1,15 +1,15 @@
 
 #Data Processor Function before doing analysis
 process_dataset <- function(data, keep_LOQ_values=FALSE) {
-  # Check if the dataset is Heavy Metals (Ag is in the 16th column)
-  if (grepl("Fe|Ag", colnames(data)[16])) {
+  # Check if the dataset is Trace Metals (Ag is in the 16th column)
+  if (grepl("Metal", colnames(data)[16])) {
     
-    # Processing for Heavy Metals dataset
+    # Processing for Trace Metals dataset
     data <- data %>%
       relocate(1:15, colnames(data)[16:25]) %>%
       mutate(across(4, ~ paste0(., ".")))  # Add "." to column 4
     
-    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (HM)
+    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (TM)
     ID_num_modifier <- function(x){#padding 0 to first two digits
       if (str_detect(substring(x[4],1,2),"\\.") == TRUE){ 
         sk=paste('0',substring(x[4],1,))
@@ -112,7 +112,7 @@ process_dataset <- function(data, keep_LOQ_values=FALSE) {
     data[, 6] <- tolower(data[, 6])
   
     
-    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (HM)
+    # FUNCTIONS TO HELP MODIFY ID NUMBERS FOR FURTHER ANALYSIS (TM)
     ID_num_modifier <- function(x){#padding 0 to first two digits
       if (str_detect(substring(x[4],1,2),"\\.") == TRUE){ 
         sk=paste('0',substring(x[4],1,))
@@ -209,9 +209,9 @@ process_dataset <- function(data, keep_LOQ_values=FALSE) {
 # NOTE FOR THE BELOW FUNCTIONS:
 #If you choose FALSE for "keep_LOQ_values", it will be replaced with 0, then removed later in the data analysis based on the user's input, when asked if you want to to keep the original LOQ values if you choose "Yes" it keeps the original values, if no it asks for a multiplier. This is because some researchers use half or maybe quarter of the LOQ values when running the analysis.
 
-# Data Processing for Heavy Metals dataset
-heavymetals_data <- read.csv("Final_Results_From_Task 1/Final_HMresults_mgkg.csv", header = TRUE)
-processed_hm_data <- process_dataset(heavymetals_data, keep_LOQ_values = TRUE) 
+# Data Processing for Trace Metals dataset
+tracemetals_data <- read.csv("Final_Results_From_Task 1/Final_TMresults_mgkg.csv", header = TRUE)
+processed_tm_data <- process_dataset(tracemetals_data, keep_LOQ_values = TRUE) 
 
 # Data Processing for Organic Compounds dataset
 oc_data <- read.csv("Final_Results_From_Task 1/Final_OCresults_mgkg.csv", header = TRUE)
