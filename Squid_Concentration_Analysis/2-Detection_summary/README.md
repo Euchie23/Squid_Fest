@@ -16,7 +16,7 @@ The folder includes Rscripts used for:
 
 **🧼 Flexible Data Preparation**  
 Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
-Options included keeping or removing LOQ values, or imputing them as ⅓ LOQ,          offering flexibility in sensitivity analysis. also a dataset with categorial         values as well as numerical for a detection report.
+Options included keeping or removing LOQ values, or imputing them by multiplying LOQ by a user-inputed muliplier, offering flexibility in sensitivity analysis. also a dataset with categorial values as well as numerical for a detection report.
 
 
 **📈 Developing Quantitative Insight into Detection Behavior**  
