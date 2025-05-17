@@ -10,6 +10,7 @@ This folder contains R scripts and analytical outputs:
 - **Tissue-Wise Temporal Regression Modeling**  
 - **Multivariate & Machine Learning Approaches**  
 - **Visualization Outputs**
+    * Icons to represent the source of each pollutant that are incorprated into the        graphs
 
 ### 🎓 Skills & Techniques Demonstrated  
 
