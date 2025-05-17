@@ -1,38 +1,37 @@
-# 🦑 Squid Fest 🦑🌊📊📈
+## 📊 Detection Summary 📁🧪🦑 <br><br>
 
-## Objective 🎯
+### Overview 🎯 <br>
+This section focuses on summarizing the **detection behavior** of trace metals and organic compounds across squid tissues and sampling years. These analyses offer crucial insights into the **distribution and quality** of the concentration data before applying statistical models. The aim was to determine which elements or compounds were reliably detected, how many values were classified as outliers, and how often concentrations fell **below the limits of detection (BLOD)** or **quantification (BLOQ)**.
 
-The Squid Fest Project involved a series of interdisciplinary research initiatives using data from squid caught off the coast of Argentina, north of the Falkland Islands. These projects aimed to assess the health of the marine environment in the region and provide insights into squid catch dynamics. The hands-on experience from these projects provided advanced expertise in data analysis, statistical modeling, emphasizes environmental science applications, particulary within marine ecology.
+The folder includes Rscripts used for: 
+- **Interactively preprocessed data**: Provides data is both numerical and categorical datasets to help with summary
+- **Detection_Summary_Tables**: Summary statistics for each compound and tissue, including detection counts  
+- **BLOD_BLOQ_Frequency**: Frequencies of samples falling below detection (BLOD) or quantification (BLOQ) limits  
+- **Outlier_Analysis**: Identification of extreme values outside expected concentration ranges  
+- **Visualization**: Barplots showing detection distribution per compound, tissue, and sampling year  
 
+<br>
 
-## **⚠️DISCLAIMER⚠️: For confidentiality reasons, this project utilized simulated data closely resembling real-world datasets. The purpose was to demonstrate analytical techniques and methodologies. As a result, any interpretations or conclusions drawn DO NOT reflect the actual conditions within the study region.**
+### 🎓 Skills & Techniques Demonstrated <br>
 
-
-
-## Skills Learned 👩‍💻 
-
-### 🚀 Analytical Techniques: <br> 
- Demonstrated proficiency in chemical analysis through the application of ICP-MS and LC-MS methodologies for environmental assessment.<br>
-### 🚀 Data Analysis: <br>
- Skilled in collecting, preprocessing, analyzing, and interpreting complex environmental datasets, including CPUE standardization and prediction.<br>
-### 🚀 Statistical Modeling: <br>
- Applied advanced statistical methods such as Generalized Linear Bayesian Models (GLBM) and Generalized Additive Models (GAM) for ecological data interpretation.<br>
-### 🚀 Programming Expertise: <br> 
- Developed robust data visualization techniques using the ggplot2 package and refined string manipulation capabilities in R programming.<br>
-### 🚀 Geospatial Analysis: <br>
- Enhanced spatial analytical skills, leveraging geospatial data to inform environmental and ecological studies.
+**🧼 Flexible Data Preparation**  
+Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
+Options included keeping or removing LOQ values, or imputing them by multiplying LOQ values by a user-inputed muliplier (e.g 1/3 or 1/2), offering flexibility in sensitivity analysis. also a dataset with categorial values as well as numerical for a detection report.
 
 
-## Tools Used 🛠️📊 
+**📈 Developing Quantitative Insight into Detection Behavior**  
+Through systematic tabulation and visualization of detection statistics, I developed an understanding of how consistently each pollutant was measured across the dataset. This helped identify compounds or tissues with insufficient data coverage — an insight that directly influenced which variables could be used in downstream models. <br>
 
-🛠️ Inductively Coupled Plasma Mass Spectrometry (ICP-MS) and liquid Chromatography Mass Spectrometry (LC-MS). <br>
-🛠️ Programming tools (R programming).  <br>
-🛠️ Geospatial analysis (QGIS).  <br>
-🛠️ Microsoft office (Excel and Word).  <br>
+**🔍 Automated Detection Summary Generation in R**  
+Using R's `dplyr` and `tidyr`, I wrote scripts that programmatically computed detection counts, BLOD/BLOQ flags, and outliers across tissues and years. These scripts reduced manual work and ensured the workflow could be repeated when new data was introduced. <br>
 
-## Projects 🦑🌊 (More to come) <br>
-### 1-Temporal variation in Chemical Concentrations ⏳📈 <br>
-    Task-1-Data Preprocessing
-    Task-2-Temporal Analysis of Concentrations
+**📉 Understanding and Interpreting BLOD/BLOQ Patterns**  
+One of the critical lessons involved correctly interpreting BLOD and BLOQ frequencies. I learned how values below these thresholds affect analytical integrity and how to classify such results for environmental toxicology studies. This was first explored while preprocessing LC-MS and ICP-MS outputs and reinforced during the creation of these summary tables. <br>
 
+**📊 Visual Communication of Data Coverage**  
+By plotting detection profiles as barplots, I made the coverage and gaps in the dataset more interpretable. These visualizations helped collaborators and reviewers quickly grasp where measurements were robust and where caution was warranted. <br>
 
+**🧠 Recognizing Dataset Strengths and Limitations Early**  
+This step acted as a diagnostic phase in the data pipeline. It helped prevent later surprises during modeling by revealing low-information variables, unbalanced distributions, and inconsistencies in tissue representation. <br>
+
+**Note:** The detection summary serves as a **critical QA/QC checkpoint** between raw data transformation and statistical modeling. It allowed me to validate assumptions, filter unreliable data, and build confidence in subsequent analyses.
