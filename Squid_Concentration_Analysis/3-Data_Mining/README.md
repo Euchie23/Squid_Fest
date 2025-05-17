@@ -1,7 +1,7 @@
 ## 🧠 Data Mining 🧬📊🧪
 
 ### Overview 🎯  
-This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, test hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
+This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, generate hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
 
   
 This folder contains datasets, R scripts for: 
