@@ -1,37 +1,36 @@
 ## 🧠 Data Mining 🧬📊🧪
 
 ### Overview 🎯  
-This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, test hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
+This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, test hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
 
-This folder includes:  <br>
+  
+This folder contains R scripts and analytical outputs: 
 - **Size-Based Correlation Analysis**  
-  Spearman correlation tests examining the relationship between squid size (categorized by mantle length) and pollutant levels.
-
 - **Gender Temporal Comparison**  
-  Comparative statistical tests evaluating pollutant differences between genders across and within years. Outputs include boxplots and summary tables.
-
 - **Tissue-Wise Temporal Regression Modeling**  
-  Regression models tracking the impact of maturity, geography, and other variables on concentrations over time.
-
 - **Multivariate & Machine Learning Approaches**  
-  PCA, RDA, clustering, and other techniques to uncover hidden structures and interactions in the data.
-
-- **Visualization Outputs**  
-  Boxplots, correlation heatmaps, PCA biplots, and classification plots summarizing patterns and findings.
+- **Visualization Outputs**
 
 ### 🎓 Skills & Techniques Demonstrated  
 
 - **🔍 Biological Pattern Detection**  
-  Learned to use correlation analysis to test hypotheses about pollutant accumulation across biological size classes and assessed how imputation of BLOD/BLOQ values affects results. Spearman correlation tests were performed on filtered and imputed datasets to evaluate squid size influence on pollutant levels.
+  Learned how to use correlation analysis to test hypotheses about pollutant accumulation across biological size classes and how imputation choices affect results.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* Spearman correlation tests were run to examine whether squid size (categorized by mantle length) influenced pollutant levels, analyzing both filtered and imputed datasets to assess sensitivity to BLOD/BLOQ values.
 
 - **📊 Comparative Analysis**  
-  Applied statistical tests (e.g., Kruskal-Wallis, t-tests, ANOVA, Shapiro-Wilks, Mann-Whitney) to evaluate pollutant differences by gender, uncovering biologically relevant temporal trends.
+  Applied statistical tests to evaluate pollutant differences by gender and uncover biologically relevant temporal trends.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* Tests included Kruskal-Wallis, t-tests, ANOVA, Shapiro-Wilks, and Mann-Whitney methods across and within years.
 
 - **📅 Temporal Modeling**  
-  Used linear regression models to assess how variables such as gender, month, latitude, distance to land, and maturity influenced pollutant levels across years and tissues. Visualized trends and changing relationships over time with plots.
+  Used linear regression models to assess how variables such as gender, month, latitude, distance to land, and maturity influenced pollutant levels across years and tissues.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* Plots were generated to visualize trends and changing relationships over time.
 
 - **🧮 Multivariate Analysis & Classification**  
-  Visualized patterns in metals and organic datasets using PCA. Explored pollutant interactions per tissue with RDA, investigated compound synergy through correlation plots and PLS, and classified tissue types by compound profiles using k-means and decision trees.
+  Explored patterns and interactions in the data using PCA, RDA, correlation plots, PLS, k-means, and decision trees.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* PCA visualized metals and organic datasets.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* RDA examined pollutant interactions per tissue.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* Correlation plots and PLS investigated compound synergy.  
+  &nbsp;&nbsp;&nbsp;&nbsp;* K-means and decision trees classified tissue types by compound profiles.
 
 - **📈 Communicating Results Visually**  
-  Strengthened data storytelling with reproducible, publication-ready plots clearly summarizing key insights across analyses.
+  Strengthened data storytelling by producing reproducible, publication-ready plots that clearly summarized key insights across analyses.
