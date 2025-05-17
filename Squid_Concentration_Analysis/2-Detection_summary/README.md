@@ -3,7 +3,8 @@
 ### Overview 🎯 <br>
 This section focuses on summarizing the **detection behavior** of trace metals and organic compounds across squid tissues and sampling years. These analyses offer crucial insights into the **distribution and quality** of the concentration data before applying statistical models. The aim was to determine which elements or compounds were reliably detected, how many values were classified as outliers, and how often concentrations fell **below the limits of detection (BLOD)** or **quantification (BLOQ)**.
 
-The folder includes:  
+The folder includes Rscripts used for: 
+- **Interactively preprocessed data**: Provides data is both numerical and categorical datasets to help with summary
 - **Detection_Summary_Tables**: Summary statistics for each compound and tissue, including detection counts  
 - **BLOD_BLOQ_Frequency**: Frequencies of samples falling below detection (BLOD) or quantification (BLOQ) limits  
 - **Outlier_Analysis**: Identification of extreme values outside expected concentration ranges  
@@ -12,6 +13,11 @@ The folder includes:
 <br>
 
 ### 🎓 Skills & Techniques Demonstrated <br>
+
+- **🧼 Flexible Data Preparation**  
+  Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
+  * Options included keeping or removing LOQ values, or imputing them as ⅓ LOQ,          offering flexibility in sensitivity analysis. also a dataset with categorial         values as well as numerical for a detection report.
+
 
 **📈 Developing Quantitative Insight into Detection Behavior**  
 Through systematic tabulation and visualization of detection statistics, I developed an understanding of how consistently each pollutant was measured across the dataset. This helped identify compounds or tissues with insufficient data coverage — an insight that directly influenced which variables could be used in downstream models. <br>
