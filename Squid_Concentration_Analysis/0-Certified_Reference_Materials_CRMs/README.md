@@ -19,13 +19,13 @@ No CRM used, but literature-based validation steps are discussed. <br>
   - [Instrument Parameters for LC-MS](../Appendix/Organic_compounds/Instrument_Parameter.pdf)
 
 - **Calibration Ranges per Tissue** (ONLY TRACE METALS)
-  - [Calibration Standard Ranges](../Appendix/Trace_Metals/Calibration_Standard_Ranges.xlsx)
+  - [Calibration Standard Ranges](../Appendix/Trace_Metals/Calibration_Standard_Ranges.png)
 
 - **Certified Mass Fraction Table** (ONLY TRACE METALS)
   - [Certified Mass Fraction Table](../Appendix/Trace_Metals/Certified_Mass_Fraction_Values.png)
 
 - **ICP-MS CRM results** (ONLY TRACE METALS)
-  - [ICP-MS CRM Results](../Appendix/Trace_Metals/ICP_MS_CRM_Full_results.xlsx) <br><br>
+  - [📊 Download ICP_CRM Excel_Results](../Appendix/Trace_Metals/ICP_MS_CRM_Full_results.xlsx) <br><br>
  
 ### ⚗️ Summary of Method Validation <br>
 #### 🧲 Trace Metals <br>
