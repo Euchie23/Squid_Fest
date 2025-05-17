@@ -28,7 +28,7 @@ library(kableExtra)
 library(tidyr)
 library(dplyr)
 certified_values <- data.frame(
-  Element = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_I"),
+  Element = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_J"),
   Certified_Value_mgkg = c(205.80, 0.37, 1.04, 71.60, 1424.00, 0.666, 2.48, 0.0317, 0.308),
   Uncertainties = c(6.00, 0.01, 0.09, 1.60, 46.00, 0.01, 0.08, 0.0013, 0.009)
 )
@@ -65,7 +65,7 @@ Mean±Standard deviation of measured values from repeated measurements to provid
 
 ```{r mean_SD_table, echo=FALSE}
 mean_SD_data <- data.frame(
-  Trace_Metals_mgkg = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_I"),
+  Trace_Metals_mgkg = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_J"),
   Certified_Values = c('205.800±6.800','0.370±0.009','1.040±0.090','71.600±1.600','1424±46.000','0.666±0.0009','2.480±0.080','0.032±0.0013','0.308±0.0009'),
   CRM01 = c('151.210±0.420','0.341±0.005','0.900±0.040','64.670±0.810','1203.380±19.860','0.620±0.014','2.300±0.110','0.073±0.009','0.479±0.009'),
   CRM02 = c('150.210±0.780','00318±0.009','1.020±0.060','64.030±0.260','1196.400±5.160','0.599±0.015','2.170±0.010','0.0713±0.009','0.406±0.025'),
@@ -86,7 +86,7 @@ This table evaluates the analytical method's accuracy by calculating the recover
 
 ```{r recovery_data, echo=FALSE}
 recovery_data <- data.frame(
-  Trace_Metals = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_I"),
+  Trace_Metals = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_J"),
   CRM01= c('73.48%','91.97%','86.29%','90.32%','84.51%','93.13%','92.68%','228.90%','155.41%'),
   CRM02= c('72.99%','85.61%','98.53%','89.43%','84.02%','89.91%','87.53%','224.98%','131.65%'),
   CRM03= c('107.55%','94.10%','97.70%','91.78%','86.04%','93.73%','88.40%','191.22%','139.58%'),
@@ -111,7 +111,7 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 cert_vs_meas <- data.frame(
-  Element = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_I"),
+  Element = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_J"),
   Certified = c(205.8, 0.371, 1.04, 71.6, 1424, 0.666, 2.48, 0.0317, 0.308),
   Measured = c(mean(c(151.21, 150.21, 221.34, 155.23, 167.39)),
                mean(c(0.341, 0.0318, 0.0349, 0.553, 0.365)),
@@ -127,7 +127,7 @@ cert_vs_meas <- data.frame(
 long_data <- pivot_longer(cert_vs_meas, cols = c(Certified, Measured), names_to = "Type", values_to = "Concentration")
 
 # Set Element as a factor to preserve custom order
-long_data$Element <- factor(long_data$Element, levels = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_I"))
+long_data$Element <- factor(long_data$Element, levels = c("Metal_A", "Metal_B", "Metal_C", "Metal_D", "Metal_E", "Metal_F", "Metal_G", "Metal_H", "Metal_J"))
 
 # Plot with lines
 ggplot(long_data, aes(x = Element, y = Concentration, group = Type, color = Type)) +
@@ -152,7 +152,7 @@ The validation of the analytical method using CRM 1566b demonstrated:
 
 -Good agreement with certified values for most elements.
 -High precision shown by low standard deviations across replicates.
--Some elements (Metal_H and Metal_I) showed high recoveries, indicating potential overestimation possibly due to matrix effects or contamination.
+-Some elements (Metal_H and Metal_J) showed high recoveries, indicating potential overestimation possibly due to matrix effects or contamination.
 
 Overall, the method showed acceptable accuracy and precision for trace metal analysis in marine tissue, validating its use for analyzing squid tissue in this project.
 
