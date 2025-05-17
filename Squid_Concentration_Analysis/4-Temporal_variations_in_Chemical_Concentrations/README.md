@@ -3,7 +3,7 @@
 ### Overview 🎯  
 This stage focused on investigating how chemical pollutant concentrations in squid tissues vary over time. It addresses one of the core hypotheses of the thesis: **do temporal patterns reveal significant shifts in exposure or accumulation?** The analysis integrates statistical testing, biological relevance, and environmental context to assess annual concentration differences across multiple tissues and elements.
 
-This folder contains datasets, plotting icons, and R scripts used to:  
+This folder contains datasets, plotting icons, and an Rscript used to:  
 - **Run temporal statistical comparisons across years**  
 - **Visualize concentration trends per tissue and compound**  
 - **Assess exceedance against recommended safety thresholds**  
@@ -12,7 +12,6 @@ This folder contains datasets, plotting icons, and R scripts used to:
 ---
 
 ### 🎓 Skills & Techniques Demonstrated  
-<<<<<<< HEAD
 
 - **🧼 Flexible Data Preparation**  
   Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
@@ -44,7 +43,7 @@ This folder contains datasets, plotting icons, and R scripts used to:
 
 - **📈 Enhancing Interpretability Through Icons and Annotation**  
   Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
->>>>>>> a382c75fec7273adddaab90ea914eb8e1d52d500
+
 
 - **📈 Enhancing Interpretability Through Icons and Annotation**  
   Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
