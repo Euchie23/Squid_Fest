@@ -16,7 +16,7 @@ No CRM used, but literature-based validation steps are discussed. <br>
 📁 Appendix contains, from the methodology section, for both trace metals and organic compounds:<br>
 - **Instrument parameters**
   - [Instrument Parameters for ICP-MS](../Appendix/Trace_Metals/Instrument_Parameter.pdf)
-  - [Instrument Parameters for LC-MS](../Appendix/Organic_compounds/Instrument_parameter.pdf)
+  - [Instrument Parameters for LC-MS](../Appendix/Organic_compounds/Instrument_Parameter.pdf)
 
 - **Calibration Ranges per Tissue** (ONLY TRACE METALS)
   - [Calibration Standard Ranges](../Appendix/Trace_Metals/Calibration_Standard_Ranges.xlsx)
