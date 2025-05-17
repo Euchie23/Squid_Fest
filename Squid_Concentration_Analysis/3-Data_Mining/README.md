@@ -1,38 +1,37 @@
-# 🦑 Squid Fest 🦑🌊📊📈
+## 🧠 Data Mining 🧬📊🧪
 
-## Objective 🎯
+### Overview 🎯  
+This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, test hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
 
-The Squid Fest Project involved a series of interdisciplinary research initiatives using data from squid caught off the coast of Argentina, north of the Falkland Islands. These projects aimed to assess the health of the marine environment in the region and provide insights into squid catch dynamics. The hands-on experience from these projects provided advanced expertise in data analysis, statistical modeling, emphasizes environmental science applications, particulary within marine ecology.
+  
+This folder contains datasets, R scripts for: 
+- **Interactively preprocessing data for analysis**
+- **Size-Based Correlation Analysis**  
+- **Gender Temporal Comparison**  
+- **Tissue-Wise Temporal Regression Modeling**  
+- **Multivariate & Machine Learning Approaches**  
+- **Visualization Outputs**
+    * Icons to represent the source of each pollutant that are incorprated into the        graphs
 
+### 🎓 Skills & Techniques Demonstrated  
+- **🔍 Biological Pattern Detection**  
+  Learned how to use correlation analysis to test hypotheses about pollutant accumulation across biological size classes and how imputation choices affect results.  
+  * Spearman correlation tests were run to examine whether squid size (categorized       by mantle length) influenced pollutant levels, analyzing both filtered and           imputed datasets to assess sensitivity to BLOD/BLOQ values.
 
-## **⚠️DISCLAIMER⚠️: For confidentiality reasons, this project utilized simulated data closely resembling real-world datasets. The purpose was to demonstrate analytical techniques and methodologies. As a result, any interpretations or conclusions drawn DO NOT reflect the actual conditions within the study region.**
+- **📊 Comparative Analysis**  
+  Applied statistical tests to evaluate pollutant differences by gender and uncover biologically relevant temporal trends.  
+  * Tests included Kruskal-Wallis, t-tests, ANOVA, Shapiro-Wilks,and Mann-Whitney        methods across and within years.
 
+- **📅 Temporal Modeling**  
+  Used linear regression models to assess how variables such as gender, month, latitude, distance to land, and maturity influenced pollutant levels across years and tissues.  
+  * Plots were generated to visualize trends and changing relationships over time.
 
+- **🧮 Multivariate Analysis & Classification**  
+  Explored patterns and interactions in the data using PCA, RDA, correlation plots, PLS, k-means, and decision trees.  
+   * PCA visualized metals and organic datasets.  
+   * RDA examined pollutant interactions per tissue.  
+   * Correlation plots and PLS investigated compound synergy.  
+   * K-means and decision trees classified tissue types by compound profiles.
 
-## Skills Learned 👩‍💻 
-
-### 🚀 Analytical Techniques: <br> 
- Demonstrated proficiency in chemical analysis through the application of ICP-MS and LC-MS methodologies for environmental assessment.<br>
-### 🚀 Data Analysis: <br>
- Skilled in collecting, preprocessing, analyzing, and interpreting complex environmental datasets, including CPUE standardization and prediction.<br>
-### 🚀 Statistical Modeling: <br>
- Applied advanced statistical methods such as Generalized Linear Bayesian Models (GLBM) and Generalized Additive Models (GAM) for ecological data interpretation.<br>
-### 🚀 Programming Expertise: <br> 
- Developed robust data visualization techniques using the ggplot2 package and refined string manipulation capabilities in R programming.<br>
-### 🚀 Geospatial Analysis: <br>
- Enhanced spatial analytical skills, leveraging geospatial data to inform environmental and ecological studies.
-
-
-## Tools Used 🛠️📊 
-
-🛠️ Inductively Coupled Plasma Mass Spectrometry (ICP-MS) and liquid Chromatography Mass Spectrometry (LC-MS). <br>
-🛠️ Programming tools (R programming).  <br>
-🛠️ Geospatial analysis (QGIS).  <br>
-🛠️ Microsoft office (Excel and Word).  <br>
-
-## Projects 🦑🌊 (More to come) <br>
-### 1-Temporal variation in Chemical Concentrations ⏳📈 <br>
-    Task-1-Data Preprocessing
-    Task-2-Temporal Analysis of Concentrations
-
-
+- **📈 Communicating Results Visually**  
+  Strengthened data storytelling by producing reproducible, publication-ready plots that clearly summarized key insights across analyses.

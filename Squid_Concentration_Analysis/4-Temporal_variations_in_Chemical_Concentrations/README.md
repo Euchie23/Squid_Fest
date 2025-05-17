@@ -12,6 +12,7 @@ This folder contains datasets, plotting icons, and R scripts used to:
 ---
 
 ### 🎓 Skills & Techniques Demonstrated  
+<<<<<<< HEAD
 
 - **🧼 Flexible Data Preparation**  
   Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
@@ -28,6 +29,22 @@ This folder contains datasets, plotting icons, and R scripts used to:
 - **⚠️ Risk Benchmarking with Toxicological Thresholds**  
   Incorporated toxicological reference data into visualizations to flag exceedances.  
   * Used a curated dataframe of recommended maximum concentrations and oral reference doses (RfDs) from published studies to overlay risk thresholds on plots.
+=======
+- **🧪 Statistical Testing for Temporal Trends**  
+  Applied appropriate statistical tests to evaluate year-on-year pollutant variations in each tissue.  
+  * Used Shapiro-Wilks to test normality and chose between ANOVA or Kruskal-Wallis based on distribution, followed by Tukey or Dunn post hoc comparisons.
+
+- **📊 Visualizing Annual Concentration Changes**  
+  Designed multi-bar plots to visualize pollutant trends across years for each tissue.  
+  * Bar plots grouped tissues on the x-axis, with bars representing different years and y-axis showing mean concentration levels.
+
+- **⚠️ Risk Benchmarking with Toxicological Thresholds**  
+  Incorporated toxicological reference data into visualizations to flag exceedances.  
+  * Used a curated dataframe of recommended maximum concentrations and oral reference doses (RfDs) from published studies to overlay risk thresholds on plots.
+
+- **📈 Enhancing Interpretability Through Icons and Annotation**  
+  Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
+>>>>>>> a382c75fec7273adddaab90ea914eb8e1d52d500
 
 - **📈 Enhancing Interpretability Through Icons and Annotation**  
   Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
