@@ -15,6 +15,10 @@ This folder contains datasets, R scripts for:
 
 ### 🎓 Skills & Techniques Demonstrated  
 
+- **🧼 Flexible Data Preparation**  
+  Developed an interactive preprocessing script that allowed users to choose how to handle BLOD and BLOQ values before analysis.  
+  * Options included keeping or removing LOQ values, or imputing them as ⅓ LOQ,          offering flexibility in sensitivity analysis.
+
 - **🔍 Biological Pattern Detection**  
   Learned how to use correlation analysis to test hypotheses about pollutant accumulation across biological size classes and how imputation choices affect results.  
   * Spearman correlation tests were run to examine whether squid size (categorized       by mantle length) influenced pollutant levels, analyzing both filtered and           imputed datasets to assess sensitivity to BLOD/BLOQ values.
