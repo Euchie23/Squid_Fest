@@ -7,11 +7,11 @@ This project investigates the contamination of squid tissues by trace metals **(
 
 📁 Trace_Metals_ICP-MS analysis using NIST CRM 1566b for metals coming from multiple sources like Al, As, Se, Mg, V, Pb, Th, etc. <br>
 Includes digestion protocol, calibration setup, and recovery calculations. <br>
-****For confidentiality reasons the trace metals used in the actual study will be anonymized and will therefore be represented by generic names (e.g Metal_A, Metal_B, etc) going forward**** <br>
+**For confidentiality reasons the trace metals used in the actual study will be anonymized and will therefore be represented by generic names (e.g Metal_A, Metal_B, etc) going forward** <br>
 
 📁 Organic_Compounds_LC-MS/MS analysis for emerging contaminants from different industries like Amiobenzoic Acid (leisure) and Metolachlor(Agriculture) etc. <br>
 No CRM used, but literature-based validation steps are discussed. <br>
-****For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward**** <br>
+**For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward** <br>
 
 📁 Appendix contains, from the methodology section, for both trace metals and organic compounds:<br>
 	-Instrument parameters <br>
