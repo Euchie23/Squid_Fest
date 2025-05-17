@@ -14,15 +14,18 @@ No CRM used, but literature-based validation steps are discussed. <br>
 \*\*\***For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward***\*\* <br>
 
 📁 Appendix contains, from the methodology section, for both trace metals and organic compounds:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-Instrument parameters <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [Instrument Parameters for ICP-MS](../Appendix/Trace_Metals/Instrument_Parameter.pdf)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [Instrument Parameters for LC-MS](../Appendix/Organic_Compounds/Instrument_Parameter.pdf)
-&nbsp;&nbsp;&nbsp;&nbsp;-Calibration Ranges per Tissue (ONLY TRACE METALS) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [Calibration Standard Ranges](../Appendix/Trace_Metals/Calibration_Standard_Ranges.xlsx)
-&nbsp;&nbsp;&nbsp;&nbsp;-Certified Mass Fraction Table (ONLY TRACE METALS)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [Certified Mass Fraction Table](../Appendix/Trace_Metals/Certified_Mass_Fraction_Values.png) 
-&nbsp;&nbsp;&nbsp;&nbsp;-ICP-MS CRM results (ONLY TRACE METALS)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- [ICP-MS CRM results](../Appendix/Trace_Metals/ICP_MS_CRM_Full_results.xlsx) <br><br>
+- **Instrument parameters**
+  - [Instrument Parameters for ICP-MS](../Appendix/Trace_Metals/Instrument_Parameter.pdf)
+  - [Instrument Parameters for LC-MS](../Appendix/Organic_Compounds/Instrument_Parameter.pdf)
+
+- **Calibration Ranges per Tissue** (ONLY TRACE METALS)
+  - [Calibration Standard Ranges](../Appendix/Trace_Metals/Calibration_Standard_Ranges.xlsx)
+
+- **Certified Mass Fraction Table** (ONLY TRACE METALS)
+  - [Certified Mass Fraction Table](../Appendix/Trace_Metals/Certified_Mass_Fraction_Values.png)
+
+- **ICP-MS CRM results** (ONLY TRACE METALS)
+  - [ICP-MS CRM Results](../Appendix/Trace_Metals/ICP_MS_CRM_Full_results.xlsx) <br><br>
  
 ### ⚗️ Summary of Method Validation <br>
 #### 🧲 Trace Metals <br>
