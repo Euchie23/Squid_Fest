@@ -36,8 +36,3 @@ _(To be completed later)_
 
 - **💬 Communication of Scientific Uncertainty**  
   Framed risk estimates in terms of relative exceedance, consumer exposure levels, and regulatory thresholds to aid interpretation by non-specialist stakeholders.
-
----
-
-- **📈 Enhancing Interpretability Through Icons and Annotation**  
-  Integrated pollutant source icons into graphs to improve visual storytelling and reinforce the link between contaminants and ecological/industrial origins.
