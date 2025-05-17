@@ -2,7 +2,7 @@
 
 ## Objective 🎯
 
-The Squid Fest folder contains two projects resulting from a series of interdisciplinary research initiatives using data from squid (_Illex Argentinus_) caught in the Southwest Atlantic Ocean. These projects aimed to assess the health of the marine environment in the region [Squid_Concentration_Analysis] and provide insights into squid catch dynamics[Squid_Stock_Assessment]. The hands-on experience from these projects provided advanced expertise in data analysis, statistical modeling, emphasizes environmental science applications, particulary within marine ecology.
+The Squid Fest folder contains two projects resulting from a series of interdisciplinary research initiatives using data from squid (_Illex Argentinus_) caught in the Southwest Atlantic Ocean. These projects aimed to assess the health of the marine environment in the region **(Squid_Concentration_Analysis)** and provide insights into squid catch dynamics **(Squid_Stock_Assessment)**. The hands-on experience from these projects provided advanced expertise in data analysis, statistical modeling, emphasizes environmental science applications, particulary within marine ecology.
 
 
 ## **⚠️DISCLAIMER⚠️: For confidentiality reasons, these projects utilized simulated data closely resembling the real dataset used for the actual projects. The purpose was to demonstrate analytical techniques and methodologies. As a result, any interpretations or conclusions drawn DO NOT reflect the actual conditions within the study region.**
@@ -40,6 +40,6 @@ The Squid Fest folder contains two projects resulting from a series of interdisc
     Appendix
 
 ### 🦑📊 Squid Stock Assessment 📈 🦑<br>
-	Pending...
+	Coming soon...
 
 
