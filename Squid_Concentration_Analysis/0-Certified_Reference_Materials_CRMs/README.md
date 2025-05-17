@@ -1,5 +1,7 @@
 🧪 Methodology Validation: CRM for Trace Metals & Organic Compounds in Squid Tissues 🦑🌊
 
+
+
 🎯 Objective
 
 This project investigates the contamination of squid tissues by trace metals ***(essential and toxic elements)***  and organic compounds. The methodologies employed include ICP-MS for trace metals and LC-MS/MS for organic contaminants. Certified Reference Material (CRM) validation and method reproducibility assessments were performed where possible to ensure data reliability.
@@ -8,13 +10,15 @@ This project investigates the contamination of squid tissues by trace metals ***
 
 📆 Project Structure
 
-📁 Trace_Metals_ICP-MS analysis using NIST CRM 1566b for metals coming from multiple sources like Al, As, Se, Mg, V, Pb, Th, etc. 
--Includes digestion protocol, calibration setup, and recovery calculations.
-*** For confidentiality reasons the trace metals used in the actual study will be anonymized and will therefore be represented by generic names (e.g Metal_A, Metal_B, etc) going forward***
+📁 Trace_Metals_ICP-MS analysis using NIST CRM 1566b for metals coming from multiple sources like Al, As, Se, Mg, V, Pb, Th, etc. <br>
+Includes digestion protocol, calibration setup, and recovery calculations. <br>
+*** For confidentiality reasons the trace metals used in the actual study will be anonymized and will therefore be represented by generic names (e.g Metal_A, Metal_B, etc) going forward*** <br>
 
-📁 Organic_Compounds_LC-MS/MS analysis for emerging contaminants from different industries like Amiobenzoic Acid (leisure) and Metolachlor(Agriculture) etc. 
--No CRM used, but literature-based validation steps are discussed.
-*** For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward***
+
+
+📁 Organic_Compounds_LC-MS/MS analysis for emerging contaminants from different industries like Amiobenzoic Acid (leisure) and Metolachlor(Agriculture) etc. <br>
+-No CRM used, but literature-based validation steps are discussed. <br>
+*** For confidentiality reasons the organic compounds used in the actual study will be anonymized and will therefore be represented by generic names (e.g Organic_A, Organic_B, etc) going forward***<br>
 
 📁 Appendix contains, from the methodology section, for both trace metals and organic compounds:
 	-Instrument parameters 
