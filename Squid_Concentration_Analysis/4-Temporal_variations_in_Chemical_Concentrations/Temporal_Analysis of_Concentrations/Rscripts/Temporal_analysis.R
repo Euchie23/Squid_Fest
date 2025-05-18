@@ -623,7 +623,7 @@ if(grepl("Metal", pollutant_name)) { # if Metal is detected  as the name of the 
     #creating a vector of the years for each summary statititc dataset to be used for plotting later
     years <- levels(factor(summary_statistics_per_pollutant$Year))
     
-#Dynamic Plot Annotations used for pollutant classification. This piece of R code is checking for the existence of a PNG image file in the TMicons or OCicons folder. If the file exists,it reads it and processes it as a graphical object. If it doesnt exist it sets 'icon' to FALSE indicating that no image is available. Some pollutants for example Metal_H may have multiple classifications like pharmaceuticals, industry etc. hence why we have mutlpile icons as indicated by "1" and "2" in the following code.
+#Dynamic Plot Annotations used for pollutant classification. This piece of R code is checking for the existence of a PNG image file in the TMicons or OCicons folder. If the file exists,it reads it and processes it as a graphical object. If it doesnt exist it sets 'icon' to FALSE indicating that no image is available. Some pollutants for example Metal_H may have multiple classifications like pharmaceuticals, industry etc. hence why we have multiple icons as indicated by "1" and "2" in the following code.
 if(file.exists(paste0(filename,contaminant,".png"))==TRUE){
   icon <- file.exists(paste0(filename,contaminant,".png"))
   icons = png::readPNG(paste0(filename,contaminant,".png")) %>%
