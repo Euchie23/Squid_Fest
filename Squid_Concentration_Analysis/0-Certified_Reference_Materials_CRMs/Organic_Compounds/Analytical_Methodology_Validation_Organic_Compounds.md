@@ -1,4 +1,4 @@
-# 📊 Method Validation for Organic Compounds
+# 📊 Methodology Validation for Organic Compounds
 
 The analytical methodology proposed for the determination of organic compounds—specifically adipic acid, ibuprofen, caprolactam, and chlorpyrifos—was adapted from the validated protocol outlined by FEO et al. (2020), which originally targeted pharmaceuticals and environmental contaminants in water and sediment matrices. This adaptation was necessitated by the lack of a single, cost-effective certified reference material (CRM) encompassing all the organic compounds investigated in this study. Furthermore, significant differences in sample matrix composition—namely, squid tissue versus aquatic matrices—posed additional challenges. As a result, comprehensive method validation could not be completed within the timeframe of this research.
 
