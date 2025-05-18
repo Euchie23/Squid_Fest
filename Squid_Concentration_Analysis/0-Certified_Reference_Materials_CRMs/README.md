@@ -52,7 +52,7 @@ No CRM used, but literature-based validation steps are discussed. <br>
 - **Instrument**: LC-MS/MS (TripleQuad/QTRAP 5500) <br>
 
 - **Validation Status**: Literature-based method; internal standard used.<br>
- [More details here on analytical methodology validation](../0-Certified_Reference_Materials_CRMs/Organic_compounds/Analytical_Methodology_validation_Organic_Compounds.md)
+ [More details here on analytical methodology validation](../0-Certified_Reference_Materials_CRMs/Organic_Compounds/Analytical_Methodology_Validation_Organic_Compounds.md)
 
 ### 🔄 Recommendations for Future Work<br>
 
