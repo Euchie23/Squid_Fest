@@ -1,5 +1,5 @@
 ---
-title: "Analytical Method Validation using CRM 1566b (Oyster Tissue)"
+title: "Analytical Methodology Validation using CRM 1566b (Oyster Tissue)"
 author: "Euchie Jn Pierre"
 date: "2025-05-14"
 output: html_document
@@ -51,7 +51,7 @@ The following table presents the raw ICP-MS measurements for CRM samples (CRM01â
 library(kableExtra)
 library(tidyr)
 library(dplyr)
-knitr::include_graphics("Data/ICP_MS_screenshot.png")
+knitr::include_graphics("../Data/ICP_MS_screenshot.png")
 ```
 
 These values indicate measured concentrations (in ppb), counts per second (CPS), and their relative standard deviations (RSD), highlighting measurement precision and instrument consistency.
