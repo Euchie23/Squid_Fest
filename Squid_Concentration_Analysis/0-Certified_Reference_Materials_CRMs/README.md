@@ -38,7 +38,7 @@ No CRM used, but literature-based validation steps are discussed. <br>
 - **Quantification**: External calibration using multi-element standards <br>
 
 - **Recovery Assessment**: CRM-certified values used to evaluate accuracy. <br>
-  [More details here on analytical methodology validation](../docs/Analytical_Methodology_Validation_Trace_Metals.html)
+  [More details here on analytical methodology validation]([../docs/Analytical_Methodology_Validation_Trace_Metals.html](https://Euchie23.github.io/Squid_Fest/Analytical_Methodology_Validation_Trace_Metals.html)
 
 
 #### 💊 Organic Compounds <br>
