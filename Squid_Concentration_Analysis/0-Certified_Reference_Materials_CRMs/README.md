@@ -38,7 +38,7 @@ No CRM used, but literature-based validation steps are discussed. <br>
 - **Quantification**: External calibration using multi-element standards <br>
 
 - **Recovery Assessment**: CRM-certified values used to evaluate accuracy. <br>
-  [More details here on analytical methodology validation](../0-Certified_Reference_Materials_CRMs/Trace_Metals/docs/Analytical_Methodology_Validation_Trace_Metals.html)
+  [More details here on analytical methodology validation](Squid_Fest/docs/Analytical_Methodology_Validation_Trace_Metals.html)
 
 
 #### 💊 Organic Compounds <br>
@@ -51,7 +51,7 @@ No CRM used, but literature-based validation steps are discussed. <br>
 
 - **Instrument**: LC-MS/MS (TripleQuad/QTRAP 5500) <br>
 
-- **Validation Status**: Literature-based method; internal standard used. <br><br>
+- **Validation Status**: Literature-based method; internal standard used.<br>
  [More details here on analytical methodology validation](../0-Certified_Reference_Materials_CRMs/Organic_Compounds/Analytical_Methodology_Validation_Organic_Compounds.html)
 
 ### 🔄 Recommendations for Future Work<br>
