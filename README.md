@@ -31,7 +31,7 @@ The Squid Fest folder contains two projects resulting from a series of interdisc
 🛠️ Microsoft office (Excel and Word).  <br>
 
 ## Projects 🦑🌊 <br>
-###[Squid_Concentrations_Analysis ⏳📈](./Squid_Concentration_Analysis) <br>
+### Squid_Concentrations_Analysis ⏳📈 [Open Folder](./Squid_Concentration_Analysis) <br>
     Task-0-CRM (Methodology validation)
     Task-1-Data_Preprocessing
     Task-2-Detectiion_summary
