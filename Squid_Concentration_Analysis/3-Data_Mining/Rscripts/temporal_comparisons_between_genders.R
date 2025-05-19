@@ -282,14 +282,14 @@ datasets_for_organic_compounds <- process_dataset(organiccompounds_data, keep_LO
 
 #generating the markdown for reading images:
 #OCicons for Organic Compounds
-OCiconz <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), icons=c("https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=15168&format=png","https://img.icons8.com/?size=38&id=15168&format=png"))
-urls <-OCiconz$icons
-names(urls) <- OCiconz$pollutants
+OCicons <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), icons=c("https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=15168&format=png","https://img.icons8.com/?size=38&id=15168&format=png"))
+urls <-OCicons$icons
+names(urls) <- OCicons$pollutants
 
 #TMicons for Trace Metals:
-TMiconz <- data.frame(pollutants=c("Ag","Cd","Co","Cu","Fe","Hg","Ni","Pb","Tl","Zn"), icons=c("https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png"))
-urlz <-TMiconz$icons
-names(urlz) <- TMiconz$pollutants
+TMicons <- data.frame(pollutants=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E"), icons=c("https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png"))
+urlz <-TMicons$icons
+names(urlz) <- TMicons$pollutants
 
 
 #Helper function for creating a clean, minimalistic theme for the plot using theme_minimal(), and then customizes the style (like text sizes, fonts, colors, backgrounds, etc.).
@@ -328,7 +328,7 @@ theme_icons <- function(base_size = 10,
 #Helper function to activate the icons for organic compound pollutants in final graph,  It first checks if the icons exist and if they do then they are loaded unto the graph: 
 markdown_function_for_OC_icons <- function(x) {
   # Use file.path() for a safe file path
-  icon_path <- file.path("OCicons", paste0(x[1], ".png"))
+  icon_path <- file.path("Squid_Concentration_Analysis/3-Data_Mining/OCicons", paste0(x[1], ".png"))
   
   # Construct the HTML string
   y <- paste0(" <img src='", icon_path, "' width='17'/>")
@@ -341,9 +341,9 @@ markdown_function_for_OC_icons <- function(x) {
 #Helper function to activate the icons for trace metal pollutants in final graph, It first checks if the icons exist and if they do then they are loaded unto the graph: 
 markdown_function_for_TM_icons <- function(x) {
   # Create file paths correctly
-  file1 <- file.path("TMicons", paste0(x[1], ".png"))
-  file2 <- file.path("TMicons", paste0(x[1], "1.png"))
-  file3 <- file.path("TMicons", paste0(x[1], "2.png"))
+  file1 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], ".png"))
+  file2 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], "1.png"))
+  file3 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], "2.png"))
   
   # Check which files exist and build the HTML string accordingly
   if (file.exists(file1) & file.exists(file2) & file.exists(file3)) {
@@ -437,13 +437,13 @@ list4names <- c()
 if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
   # Trace metals subset
   range <- colnames(dataset_with_numerical_values[16:25])
-  icons_tm <- apply(TMiconz, 1, markdown_function_for_TM_icons)
+  icons_tm <- apply(TMicons, 1, markdown_function_for_TM_icons)
   icons_markdown <- icons_tm
   range_name <- 'Metal_A:Metal_B'
   number_range <- 16:25
 } else {
   # Organic compounds subset
-  icons_oc <- apply(OCiconz, 1, markdown_function_for_OC_icons)
+  icons_oc <- apply(OCicons, 1, markdown_function_for_OC_icons)
   icons_markdown <- icons_oc
   range <- colnames(dataset_with_numerical_values[16:19])
   range_name <- 'Organic_A:Organic_B'
@@ -821,7 +821,7 @@ while(h != length(number_range)+1){
             results_gender_within_years[1,5] <- NA
             results_gender_within_years[1,6] <- NA
             results_gender_within_years[1,7] <- NA
-            results_gender_within_years[1,8] <-NA
+            results_gender_within_years[1,8] <- NA
             results_gender_within_years[1,9] <- NA
             results_gender_within_years[1,10] <-NA
             accumulated_results_GWY <- rbind(accumulated_results_GWY, results_gender_within_years)
@@ -985,7 +985,7 @@ return(list (boxplots_for_pollutants=list0, gender_between_years_tables=list1, g
 
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required and user has to choose between datasets_for_organic_compounds or datasets_for_trace_metals for data processing,  also choose a multiplier to help adjust the y_axis since some plots may not show results clearly due to the compression effect or scale distortion of the outliers. For example: The 0.95 means that the upper limit of the y axis will be set at 0.95 * the minimum outlier from the upper quantile for each pollutant resulting in different y axis scales for each pollutant based on their minimum upper outliers. This can be changed as user sees fit. Users also have the option to remove all zeroes and focus on only the detected concentrations or keep them. The results are saved in temporal_gender_comparisons_results list.
-gender_temporal_comparisons_results <- temporal_comparisons_between_genders(datasets_for_organic_compounds,remove.zeroes = FALSE)
+gender_temporal_comparisons_results <- temporal_comparisons_between_genders(datasets_for_trace_metals,remove.zeroes = FALSE)
 
 
 

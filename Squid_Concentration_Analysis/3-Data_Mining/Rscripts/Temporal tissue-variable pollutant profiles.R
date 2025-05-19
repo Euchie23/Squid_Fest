@@ -547,7 +547,7 @@ coefficient_results_modification <- function(coefficients_accumulated) {
 }
 
 # Main function: comparing_years_per_tissue_per_variable
-# This function helps explore how different environmental and biological factors (like gender, distance to land, latitude, month of capture, and maturity level) affect pollutant concentrations in squid tissues over time (2019, 2020, and 2021). For each factor (such as distance to land), the function creates graphs that show how pollutant levels change across different tissues (like liver, muscle, gills, etc.). Each graph has separate panels (called facets) for each pollutant — such as heavy metals or organic compounds — so you can easily compare patterns across tissues and years.It also adds regression lines to show how strong the relationship is between the factor and the pollutant in each tissue. These lines help you see if the connection is positive, negative, or weak.The function deals with zero values, applies statistical models (like linear regression), and returns both the graphs and the results in a list. This helps identify which variables have a consistent influence on pollutant levels over time and across different tissues.
+# This function helps explore how different environmental and biological factors, refered to as variables in the analysis, (like gender, distance to land, latitude, month of capture, and maturity level) affect pollutant concentrations in squid tissues over time (2019, 2020, and 2021). For each factor (such as distance to land), the function creates graphs that show how pollutant levels change across different tissues (like liver, muscle, gills, etc.). Each graph has separate panels (called facets) for each pollutant — such as heavy metals or organic compounds — so you can easily compare patterns across tissues and years.It also adds regression lines to show how strong the relationship is between the factor and the pollutant in each tissue. These lines help you see if the connection is positive, negative, or weak.The function deals with zero values, applies statistical models (like linear regression), and returns both the graphs and the results in a list. This helps identify which variables have a consistent influence on pollutant levels over time and across different tissues.
 comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = FALSE){
   dataset_with_numerical_values <- as.data.frame(data_list$dataset_with_numerical_values)
   dataset_with_numerical_values[,c(7,8,9,13,14)] =as.numeric(unlist(dataset_with_numerical_values[,c(7,8,9,13,14)]))
@@ -764,9 +764,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
       })
       list3<-append(list(pvalues_accumulated),list3, 0)
       name3 <- paste(variable,'_',year[h],"_coeffcient_results",sep = "")
-      list4names <- append(list3names,name3)
-      #print(long_subsetted_year_dataset[,c(7:13)])
-      
+      list3names <- append(list3names,name3)
       
   
       # Step 8: plotting data
