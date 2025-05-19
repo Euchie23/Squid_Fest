@@ -1,7 +1,10 @@
 ## 🧠 Data Mining 🧬📊🧪
 
 ### Overview 🎯  
-This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, generate hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid.
+This stage involved a range of exploratory and statistical techniques to extract meaningful patterns, generate hypotheses, and uncover ecological or biological insights from pollutant concentration data. Analyses were performed across various biological and environmental variables, focusing on identifying how factors like gender, size, year, and tissue type influence pollutant distributions in squid. <br><br>
+**Note: During data mining and exploratory analysis, concentrations below the Limit of Quantification (LOQ) were set to zero and retained, following the original thesis approach. This ensured comprehensive pattern detection across the full dataset.
+For hypothesis-driven statistical analyses (e.g., Tasks 4 and 5), these zero values were excluded to improve the precision and validity of results, minimizing bias from undetectable concentrations.**
+
 
   
 This folder contains datasets, R scripts for: 
