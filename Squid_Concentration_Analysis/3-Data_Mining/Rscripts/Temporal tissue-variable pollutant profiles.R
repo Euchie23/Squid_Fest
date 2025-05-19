@@ -298,7 +298,7 @@ theme_icons <- function(base_size = 10,
 #Helper function to activate the icons for organic compound pollutants in final graph,  It first checks if the icons exist and if they do then they are posted in the graph: 
 markdown_function_for_OC_icons <- function(x) {
   # Use file.path() for a safe file path
-  icon_path <- file.path("OCicons", paste0(x[1], ".png"))
+  icon_path <- file.path("Squid_Concentration_Analysis/3-Data_Mining/OCicons", paste0(x[1], ".png"))
   
   # Construct the HTML string
   y <- paste0(x[1]," <img src='", icon_path, "' width='17'/>")
@@ -357,9 +357,13 @@ get_coefficients <- function (subsetted_yearly_dataset){
       # Filtering the subsetted_yearly_dataset dataframe by pollutants
       pollutant_per_year <- filter(as.data.frame(subsetted_yearly_dataset), pollutants == pollutants[h])
       
+      if (unique(pollutant_per_year$vars) != 'Latitude'){
       #Changing values to numeric to be manipulated and plotted
       Values_numeric <- suppressWarnings(as.numeric(as.character(pollutant_per_year$Values)))
-      
+      }else{
+        #Changing values to numeric to be manipulated and plotted
+        Values_numeric <- suppressWarnings(as.numeric(as.factor(as.character(pollutant_per_year$Values)))) 
+      }
       # Handle xmin and xmax
       xmin <- ifelse(any(Values_numeric != 0, na.rm = TRUE), min(Values_numeric, na.rm = TRUE), 0)
       xmax <- ifelse(any(Values_numeric != 0, na.rm = TRUE), max(Values_numeric, na.rm = TRUE), 1)
@@ -461,7 +465,11 @@ get_coefficients <- function (subsetted_yearly_dataset){
             }else if (unique(tissue_per_pollutant_per_year$vars) == 'dta_km'){
               coefficient_results_1[1, 5] <- midpoint_x_axis/0.91
             }else if (unique(tissue_per_pollutant_per_year$vars) == 'dtfl_km'){
+              if (grepl("Metal", unique(tissue_per_pollutant_per_year$pollutants))) {
               coefficient_results_1[1, 5] <- midpoint_x_axis/0.65
+              }else{
+                coefficient_results_1[1, 5] <- midpoint_x_axis
+              }
             }else if (unique(tissue_per_pollutant_per_year$vars) == 'Latitude'){
               coefficient_results_1[1, 5] <- midpoint_x_axis/0.5
             }else if (unique(tissue_per_pollutant_per_year$vars) == 'Mantle_length_mm'){
@@ -552,12 +560,10 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
   list1 <- list()
   list2 <- list()
   list3 <- list()
-  #list4 <- list()
   list0names <- c()
   list1names <- c()
   list2names <- c()
   list3names <- c()
-  #list4names <- c()
   
   # Step 2: Determine pollutant range and subset the dataset based on its presence
   if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
@@ -611,6 +617,9 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
       cat("\n")
       variable <- colnames(subsetted_dataset_with_numerical_values)[i]
       print(variable)
+      if((year[h]=='2019'&variable=='Gender')==TRUE){ # This is because only Females were caught in 2019 since all the values are the same for this variable then there's no point in running a correlation test
+        next
+      }
       # Step 4: Long format transformation of the dataset
       if (remove.zeroes == FALSE) {
         long_dataset <- subsetted_dataset_with_numerical_values %>%
@@ -643,7 +652,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
       
       # Step 7: Computing X and Y axis limits for each pollutant (facet) per tissue, per year, for plotting
       
-      if (variable != "Gender") { 
+      if (!(variable %in% c("Gender", "Latitude"))) { 
         # Create x upper and lower limits
         # 1. Compute raw x-axis limits from dataset
         x_limits <- long_subsetted_year_dataset %>%
@@ -786,10 +795,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             theme(
               axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),  # Rotate x-axis labels
               plot.margin = margin(20, 20, 20, 20)  # Add margins to give labels more space
@@ -811,10 +816,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             # Conditional replacement of 0/1 labels for Gender
             {if (unique(plotting_dataset$vars) == 'Gender')
               scale_x_continuous(
@@ -841,10 +842,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             theme(
               axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),  # Rotate x-axis labels
               plot.margin = margin(20, 20, 20, 20)  # Add margins to give labels more space
@@ -866,10 +863,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             # Conditional replacement of 0/1 labels for Gender
             {if (unique(plotting_dataset$vars) == 'Gender')
               scale_x_continuous(
@@ -896,10 +889,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             theme(
               axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),  # Rotate x-axis labels
               plot.margin = margin(20, 20, 20, 20)  # Add margins to give labels more space
@@ -909,7 +898,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
           name2 <- paste(variable,"_plots_", year[h], sep = "")
           list2names <- append(list2names,name2)
         }else{
-          #print(str(plotting_dataset))
           plt <-plotting_dataset %>% ggplot(aes(Values, concentrations, colour = Tissue, group=Tissue)) +
             geom_smooth(method=lm, se=FALSE)+
             labs(title = paste(tools::toTitleCase(year[h]),variable,"Vs Concentrations mg/kg",sep =" "),
@@ -921,10 +909,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+ 
             theme_icons()+
             geom_point(aes(shape = Tissue, color = Tissue), size = 2)+
-            # scale_color_manual(
-            #   values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-            #   drop = FALSE
-            # ) +
             # Conditional replacement of 0/1 labels for Gender
             {if (unique(plotting_dataset$vars) == 'Gender')
               scale_x_continuous(
@@ -939,65 +923,6 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
           list2names <- append(list2names,name2)
         }
       }
-      # }else{
-      #   if(unique(plotting_dataset$vars)=='Latitude'){
-      #     plt <-plotting_dataset %>% ggplot(aes(Values, concentrations, colour = Year, group=Year)) +
-      #       geom_smooth(method=lm, se=FALSE)+
-      #       labs(title = paste(tools::toTitleCase(tissues[h]),variable,"Vs Concentrations mg/kg",sep =" "),
-      #            y = "Concentration mg/kg", x = paste(variable))+
-      #       facet_wrap(vars(pollutants), labeller = as_labeller(icons_markdown), scales ="free", ncol=3, drop = TRUE) +
-      #       ggh4x::facetted_pos_scales(
-      #         x = scales_x,
-      #         y = scales_y
-      #       )+ 
-      #       theme_icons()+
-      #       geom_point(aes(shape = Year, color = Year), size = 2)+
-      #       scale_color_manual(
-      #         values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-      #         drop = FALSE
-      #       ) +
-      #       theme(
-      #         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),  # Rotate x-axis labels
-      #         plot.margin = margin(20, 20, 20, 20)  # Add margins to give labels more space
-      #       )+
-      #       geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep = ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE) 
-      #     list3<-append(list(plt),list3, 0)
-      #     name3 <- paste(variable,"_plots_", tissues[h], sep = "")
-      #     list3names <- append(list3names,name3)
-      #   }else{
-      #     #print(str(plotting_dataset))
-      #     plt <-plotting_dataset %>% ggplot(aes(Values, concentrations, colour = Year, group=Year)) +
-      #       geom_smooth(method=lm, se=FALSE)+
-      #       labs(title = paste(tools::toTitleCase(tissues[h]),variable,"Vs Concentrations mg/kg",sep =" "),
-      #            y = "Concentration mg/kg", x = paste(variable))+
-      #       facet_wrap(vars(pollutants), labeller = as_labeller(icons_markdown), scales ="free", ncol=3, drop = TRUE) +
-      #       ggh4x::facetted_pos_scales(
-      #         x = scales_x,
-      #         y = scales_y
-      #       )+ 
-      #       theme_icons()+
-      #       geom_point(aes(shape = Year, color = Year), size = 2)+
-      #       scale_color_manual(
-      #         values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
-      #         drop = FALSE
-      #       ) +
-      #       # Conditional replacement of 0/1 labels for Gender
-      #       {if (unique(plotting_dataset$vars) == 'Gender')
-      #         scale_x_continuous(
-      #           limits = c(-0.5, 1.5),  # Adjust the x limits to make it more centered
-      #           breaks = c(0, 1), # Place breaks at 0 and 1
-      #           labels = c("Females", "Males")
-      #         ) } +
-      #       # Optional p-value text
-      #       {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)} 
-      #     #stat_cor(method = "spearman", aes(label =paste(r.label, "pvalue",..p.., sep = "~")), position = position_dodge(width = .1), hjust=-0.7, size = 3.5)
-      #     #{if(variable=='dta_km|dtfl_km')scale_x_continuous(limits = c(min(long_dataset$Values), max(long_dataset$Values)))}+
-      #     # geom_text(pvalues, mapping=aes(label=paste(rho, pval, sep = ",")),hjust =-0.7, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE) 
-      #     list3<-append(list(plt),list3, 0)
-      #     name3 <- paste(variable,"_plots_", tissues[h], sep = "")
-      #     list3names <- append(list3names,name3)
-      #   }
-      # }
       names(list0)<-list0names
       names(list1)<-list1names
       names(list2)<-list2names
@@ -1009,4 +934,65 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
 }
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required. Users can also remove all zeroes and focus on only the detected concentrations or keep them.The user also has to choose between datasets_for_organic_compounds or datasets_for_trace_metals.The results are saved in temporal_comparison_results_per_tissue.
-temporal_tissue_variable_analysis <- comparing_tissues_per_year_per_variable(datasets_for_trace_metals,remove.zeroes = FALSE)
+temporal_tissue_variable_analysis <- comparing_tissues_per_year_per_variable(datasets_for_organic_compounds,remove.zeroes = FALSE)
+
+#Below code saves multiple plots into individual PNG files. It loops through the list of plots and and for each plot it extracts the tissue name, and the plots for that tissue then saves them in their respective tissue folders.
+save_graphs <- function(graph_list) {
+  # Extract pollutant types from the first available plot
+  plot_obj <- graph_list[["2020"]][[1]]
+  plot_data <- plot_obj$data
+  pollutant_types <- unique(plot_data$pollutants)
+  
+  years <- c('2019', '2020', '2021')  # Define order of tissues
+  
+  # Iterate through tissues in the specified order
+  for (year in years) {
+    
+    # Check if the tissue exists in the graph list
+    if (!(year %in% names(graph_list))) {
+      next  # Skip if the tissue does not have any plots
+    }
+    
+    # Define the folder where you want to save the PNG files for each tissue
+    if (any(grepl("Metal", pollutant_types))) {
+      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis/Trace_metals", year)
+    } else {
+      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis/Organic_compounds", year)
+    }
+    
+    # Create the output folder if it doesn't exist
+    if (!dir.exists(output_folder)) dir.create(output_folder, recursive = TRUE)
+    
+    year_sublist <- graph_list[[year]]
+    
+    # Loop through each plot for the current tissue
+    for (i in seq_along(year_sublist)) {
+      plot_name <- names(year_sublist)[i]
+      plot_object <- year_sublist[[i]]
+      
+      cat("\n----------\n")
+      cat("Checking:", year, "_", plot_name, "\n")
+      
+      # Construct output path for each plot
+      output_path <- file.path(output_folder, paste0(year, "_", plot_name, ".png"))
+      
+      # Ensure any open devices are closed before starting new plot saving
+      if (!is.null(dev.list())) {
+        dev.off()  # Close all open devices
+      }
+      
+      # Try saving the plot
+      tryCatch({
+        png(output_path, width = 1400, height = 800)
+        grid::grid.draw(ggplotGrob(plot_object))
+        cat("Saved:", output_path, "\n")
+        dev.off()  # Ensure device is closed
+      }, error = function(e) {
+        cat("⚠️ Error in", plot_name, ":", e$message, "\n")
+        if (!is.null(dev.list()) && length(dev.list()) > 0) dev.off()  # Force-close if error left device open
+      })
+    }
+  }
+}
+#Calling save_graphs function:
+save_graphs(temporal_tissue_variable_analysis)
