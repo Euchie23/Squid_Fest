@@ -243,7 +243,7 @@ process_dataset <- function(data, keep_LOQ_values=FALSE) {
 
 # Data Processing for Trace Metals dataset
 tracemetals_data <- read.csv("Squid_Concentration_Analysis/3-Data_Mining/Datasets/preprocessed_data/Final_TMresults_mgkg.csv", header = TRUE)
-datasets_for_Trace_metals <- process_dataset(tracemetals_data, keep_LOQ_values = FALSE) 
+datasets_for_trace_metals <- process_dataset(tracemetals_data, keep_LOQ_values = FALSE) 
 
 
 # Data Processing for Organic Compounds dataset
@@ -252,14 +252,14 @@ datasets_for_organic_compounds <- process_dataset(organiccompounds_data, keep_LO
 
 #generating the markdown for reading images:
 #OCicons for Organic Compounds
-OCiconz <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), icons=c("https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=15168&format=png","https://img.icons8.com/?size=38&id=15168&format=png"))
-urls <-OCiconz$icons
-names(urls) <- OCiconz$pollutants
+OCicons <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), icons=c("https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=15168&format=png","https://img.icons8.com/?size=38&id=15168&format=png"))
+urls <-OCicons$icons
+names(urls) <- OCicons$pollutants
 
 #TMicons for Trace Metals:
-TMiconz <- data.frame(pollutants=c("Ag","Cd","Co","Cu","Fe","Hg","Ni","Pb","Tl","Zn"), icons=c("https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png"))
-urlz <-TMiconz$icons
-names(urlz) <- TMiconz$pollutants
+TMicons <- data.frame(pollutants=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E"), icons=c("https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=38&id=ZbNOoXleVpQN&format=png","https://img.icons8.com/?size=160&id=8FW995comxyx&format=png"))
+urlz <-TMicons$icons
+names(urlz) <- TMicons$pollutants
 
 
 #Helper function for prepping markdown for ggplot. This is used to turn the url text into an image.
@@ -298,7 +298,7 @@ theme_icons <- function(base_size = 10,
 #Helper function to activate the icons for organic compound pollutants in final graph,  It first checks if the icons exist and if they do then they are posted in the graph: 
 markdown_function_for_OC_icons <- function(x) {
   # Use file.path() for a safe file path
-  icon_path <- file.path("OCicons", paste0(x[1], ".png"))
+  icon_path <- file.path("Squid_Concentration_Analysis/3-Data_Mining/OCicons", paste0(x[1], ".png"))
   
   # Construct the HTML string
   y <- paste0(x[1]," <img src='", icon_path, "' width='17'/>")
@@ -311,9 +311,9 @@ markdown_function_for_OC_icons <- function(x) {
 #Helper function to activate the icons for Trace metal pollutants in final graph, It first checks if the icons exist and if they do then they are loaded unto the graph: 
 markdown_function_for_TM_icons <- function(x) {
   # Create file paths correctly
-  file1 <- file.path("TMicons", paste0(x[1], ".png"))
-  file2 <- file.path("TMicons", paste0(x[1], "1.png"))
-  file3 <- file.path("TMicons", paste0(x[1], "2.png"))
+  file1 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], ".png"))
+  file2 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], "1.png"))
+  file3 <- file.path("Squid_Concentration_Analysis/3-Data_Mining/TMicons", paste0(x[1], "2.png"))
 
   # Check which files exist and build the HTML string accordingly
   if (file.exists(file1) & file.exists(file2) & file.exists(file3)) {
@@ -328,32 +328,6 @@ markdown_function_for_TM_icons <- function(x) {
   }
   
   return(y)
-}
-
-
-
-# # Helper function to convert coordinates from distance, minutes and seconds (DMS) to decimals Conversion function for DMS-style coordinates
-convert_dms_to_decimal <- function(coord_vector) {
-  
-  #Extracts parts of the coordinate (degrees, minutes, direction) using a regular expression.
-  matches <- stringr::str_match(coord_vector, "(\\d{2,3})°(\\d{2})'([NSEW])")
-  
-  #Gets the degrees (e.g., 60) and turns it into a number.
-  degrees <- as.numeric(matches[,2])
-  
-  #Gets the minutes (e.g., 30) and turns it into a number.
-  minutes <- as.numeric(matches[,3])
-  
-  #Gets the direction (e.g., N, S, E, or W).
-  direction <- matches[,4]
-  
-  #Converts DMS to decimal format (e.g., 60 + 30/60 = 60.5).
-  decimal <- degrees + minutes / 60
-  
-  #Flips the sign (makes it negative) if the direction is West or South.
-  decimal[direction %in% c("W", "S")] <- -decimal[direction %in% c("W", "S")]
-  
-  return(decimal)
 }
 
 # Helper function to calculate and store coefficients after performing spearmans correlation to assess the strength and direction of the monotonic relationship between year and concentrations. 
@@ -519,7 +493,7 @@ coefficient_results_modification <- function(coefficients_accumulated) {
 }
 
 # Main function: comparing_years_per_tissue_per_variable
-# This function performs a series of data processing steps, including statistical analysis, and visualization.The main purpose of the function is to assess temporal changes in the influence of each variable on pollutant concentration. This setup helps identify which variables consistently explain variation and how those relationships may have evolved year to year between pollutant concentrations and the environmental and biological variables (Gender, distance to land, latitude, month of capture, maturity level etc) per tissue. Regression lines are used to show how strong those relationships are. The function includes options for handling zero values, and performing statistical modeling (e.g., linear regression) to assess the strength of these relationships. Plots are generated using `ggplot2`, and results are returned in a list.
+#This function helps explore how different environmental and biological factors, refered to as variables in the analysis, (like distance to land, latitude, and month of capture) relate to pollutant levels in squid tissues. It focuses on how these relationships look within each tissue — like liver, stomach, muscle, and ink sac.For each factor (such as distance to land), the function creates separate sets of graphs for each tissue. Within each graph, you’ll see small panels (called facets), where each panel shows the behavior of a specific pollutant (like a trace metal or an organic compound).The data in each panel is grouped by year (e.g., 2019, 2020, 2021), so it’s easy to spot changes over time. The graphs also include regression lines, which help show whether the factor and the pollutant are positively related, negatively related, or not strongly related.The function handles zero values and applies statistical models (like linear regression) to assess the strength of these patterns. It returns both the plots and the statistical output in a list. This approach helps identify whether environmental or biological factors consistently affect pollutant levels within each tissue across different years.
 comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = FALSE){
   dataset_with_numerical_values <- as.data.frame(data_list$dataset_with_numerical_values)
   dataset_with_numerical_values[,c(7,8,9,13,14)] =as.numeric(unlist(dataset_with_numerical_values[,c(7,8,9,13,14)]))
@@ -542,7 +516,7 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
   # Step 2: Determine pollutant range and subset the dataset based on its presence
   if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
     # Trace metals subset
-    icons_tm <- apply(TMiconz, 1, markdown_function_for_tM_icons)
+    icons_tm <- apply(TMicons, 1, markdown_function_for_TM_icons)
     names(icons_tm) <- names(urlz)
     icons_markdown <- icons_tm
     number_range <- 16:25
@@ -555,7 +529,7 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
     range <- colnames(dataset_with_numerical_values[16:25])
   } else {
     # Organic compounds subset
-    icons_oc <- apply(OCiconz, 1, markdown_function_for_OC_icons)
+    icons_oc <- apply(OCicons, 1, markdown_function_for_OC_icons)
     names(icons_oc) <- names(urls)
     icons_markdown <- icons_oc
     number_range <- 16:19
@@ -569,15 +543,8 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
     range <- colnames(dataset_with_numerical_values[16:19])
   }
   
-  # Step 3: Prepare and subsetting dataset for further analysis
-  #final_coefficients_results <- data.frame(matrix(ncol = 9, nrow = 0))# making empty datasets to store results
-  
-  #subsetted_dataset_with_variables <- dataset_with_numerical_values[, c(8, 9, 13)]#Subsetting 
-  
-  #subsetted_dataset_with_numerical_values <- dataset_with_numerical_values[,c(7:9,11:15,number_range,6,3)]# subsetting needed columns for futher analysis 
 
-  
-  # Step 4: Loop through variables and calculate coefficients
+  # Step 3: Loop through variables and calculate coefficients
   for (h in 1:4) {
     cat("\n")
     cat("\n")
@@ -597,25 +564,13 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
       cat("\n")
       variable <- colnames(subsetted_dataset_with_numerical_values)[i]
       print(variable)
-      #print(tissues[h])
-    # Step 5: Long format transformation of the dataset
+  
+    # Step 4: Long format transformation of the dataset
     if (remove.zeroes == FALSE) {
       long_dataset <- subsetted_dataset_with_numerical_values %>%
         pivot_longer(all_of(range), names_to = "pollutants", values_to = "concentrations") %>%
         pivot_longer(!!rlang::sym(paste(variable)), names_to = "vars", values_to = "Values")%>% 
         mutate(
-          # # Save original coordinate values only for Longitude/Latitude
-          # coord_label = case_when(
-          #   vars %in% c("Latitude") ~ Values,
-          #   TRUE ~ NA_character_
-          # ),
-          # Convert Values appropriately
-          # Values = case_when(
-          #   vars == "Gender" ~ as.numeric(as.character(Values)),
-          #   #vars == "Maturity_level" ~ as.character(Values),
-          #   # vars %in% c("Latitude") ~ convert_dms_to_decimal(Values),
-          #   # TRUE ~ as.numeric(Values)
-          # ),
           concentrations = as.numeric(concentrations)
         )
     } else {
@@ -624,71 +579,23 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
         pivot_longer(!!rlang::sym(paste(variable)), names_to = "vars", values_to = "Values") %>%
         filter(concentrations != 0) %>% 
         mutate(
-          # Save original coordinate values only for Longitude/Latitude
-          # coord_label = case_when(
-          #   vars %in% c("Latitude") ~ Values,
-          #   TRUE ~ NA_character_
-          # ),
-          # Convert Values appropriately
-          # Values = case_when(
-          #   vars == "Gender" ~ as.numeric(as.character(Values)),
-          #   #vars == "Maturity_level" ~ as.character(Values),
-          #   # vars %in% c("Latitude") ~ convert_dms_to_decimal(Values),
-          #   # TRUE ~ as.numeric(Values)
-          # ),
           concentrations = as.numeric(concentrations)
         )
     }
     
-      # Step 6: Subsetting long dataset by tissues and finding the coefficients
-   # if (nrow(long_dataset) != 0) {
+      # Step 5: Subsetting long dataset by tissues and finding the coefficients
         long_subsetted_tissue_dataset <- long_dataset %>%
           group_by(pollutants) %>%
           filter(Tissue == tissues[h])
-        #if (nrow(long_subsetted_tissue_dataset) > 0) {
-          # Ensuring that Tissue is a factor with the correct order (in terms of most to least likely to be polluted
-          #long_subsetted_tissue_dataset$Tissue <- factor(long_subsetted_tissue_dataset$Tissue, levels = c("liver", "stomach", "muscle", "inksac"))
-        # long_subsetted_tissue_dataset$pollutants <- factor(long_subsetted_tissue_dataset$pollutants, levels = sorted_cols)
           coefficients <- get_coefficients(long_subsetted_tissue_dataset)
-          #print(coefficients)
-          #coefficients_accumulated <- rbind(coefficients_accumulated, coefficients)
-      #}
-    #}
-      # Step 7: Calculate p-values
+     
+       # Step 6: Calculate p-values
       pvalues <- coefficient_results_modification(coefficients)
       pvalues_accumulated <- rbind(pvalues_accumulated, pvalues)
       print(pvalues)
       
       
-      # Step 8: Modify accumulated coefficients datasets
-      
-      #print(coefficients_accumulated)
-      # 
-      # coefficients_modified <- pvalues[,-c(4:7)] %>%
-      #   dplyr::distinct(pollutants, y_axis_upper_limit)
-      # long_dataset2 <- long_dataset %>%
-      #   left_join(coefficients_modified, by = c('pollutants' = 'pollutants'))
-      # # Function to replace NA values
-      # replacing_na <- function(x) {
-      #   if (is.na(x[10])) {
-      #     x[10] <- x[7]
-      #   }
-      #   return(x)
-      # }
-      # 
-      # 
-      # # Apply the function to replace NAs
-      # long_dataset_modified <- data.frame(t(apply(long_dataset2, 1, replacing_na)))
-      # colnames(long_dataset_modified) <- colnames(long_dataset2)
-      # long_dataset_modified$y_axis_upper_limit <- as.numeric(long_dataset_modified$y_axis_upper_limit)
-      
-      # Filter the modified dataset for the highest y_axis_upper_limit per pollutant within each tissue
-    
-      # upper_limits <- long_dataset_modified %>%
-      #   group_by(pollutants) %>%
-      #   summarise(y_axis_upper_limit = max(y_axis_upper_limit, na.rm = TRUE), .groups = "drop") 
-      
-
+      # Step 7: Computing X and Y axis limits for each pollutant (facet) per tissue, per year, for plotting
       if (variable != "Gender") { 
         # Create x upper and lower limits
         # 1. Compute raw x-axis limits from dataset
@@ -748,10 +655,7 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
         scales_x <- NULL
       }
       
-      # Ensuring that Tissue is a factor with the correct order for 'y' axis scales
-      #reordered_tissues <- c("liver", "stomach", "muscle", "inksac")
-      #long_dataset_modified1$Tissue <- factor(long_dataset_modified1$Tissue, levels = c("liver", "stomach", "muscle", "inksac"))
-      
+    
       # Y_Axis---- 
       # Create x upper and lower limits
       # 1. Generate y-axis limits by pollutant
@@ -768,7 +672,7 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
         )
       
       # 2. Define your full possible list
-      if (grepl("Ag", colnames(dataset_with_numerical_values)[16])) {
+      if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
         original_pollutant_list <- c("Metal_A", "Metal_B", "Metal_C","Metal_D", "Metal_E", "Metal_F","Metal_G", "Metal_H", "Metal_I", "Metal_J")
         original_n <- c(5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
       } else {
@@ -804,15 +708,10 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
       list4<-append(list(pvalues_accumulated),list4, 0)
       name4 <- paste(variable,'_',tissues[h],"_coeffcient_results",sep = "")
       list4names <- append(list4names,name4)
-      #print(long_subsetted_tissue_dataset[,c(7:13)])
       
       
-      #print(df_scales)
-      # Step 1: Prepare plotting_dataset
+      # Step 8: plotting data
       plotting_dataset <- long_subsetted_tissue_dataset 
-      #print(str(plotting_dataset))
-      
-      # Step 10: plotting data
       if(tissues[h]=='liver'){
         if(unique(plotting_dataset$vars)=='Latitude'){
           plt <-plotting_dataset %>% ggplot(aes(Values, concentrations, colour = Year, group=Year)) +
@@ -855,8 +754,6 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
               values = c("2019" = "red", "2020" = "green", "2021" = "blue"),
               drop = FALSE
             ) +
-            # Conditional X-axis limits (already existing)
-            #{if(variable=='dta_km|dtfl_km')scale_x_continuous(limits = c(min(long_dataset$Values), max(long_dataset$Values)))}+
             # Conditional replacement of 0/1 labels for Gender
             {if (unique(plotting_dataset$vars) == 'Gender')
               scale_x_continuous(
@@ -1031,9 +928,6 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
               ) } +
             # Optional p-value text
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)} 
-          #stat_cor(method = "spearman", aes(label =paste(r.label, "pvalue",..p.., sep = "~")), position = position_dodge(width = .1), hjust=-0.7, size = 3.5)
-          #{if(variable=='dta_km|dtfl_km')scale_x_continuous(limits = c(min(long_dataset$Values), max(long_dataset$Values)))}+
-          # geom_text(pvalues, mapping=aes(label=paste(rho, pval, sep = ",")),hjust =-0.7, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE) 
           list3<-append(list(plt),list3, 0)
           name3 <- paste(variable,"_plots_", tissues[h], sep = "")
           list3names <- append(list3names,name3)
@@ -1051,7 +945,7 @@ comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = 
 
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required. Users can also remove all zeroes and focus on only the detected concentrations or keep them.The user also has to choose between datasets_for_organic_compounds or datasets_for_trace_metals.The results are saved in temporal_comparison_results_per_tissue.
-temporal_comparison_results_per_tissue <- comparing_years_per_tissue_per_variable(datasets_for_trace_metals,remove.zeroes = FALSE)
+tissue_wise_temporal_variable_analysis <- comparing_years_per_tissue_per_variable(datasets_for_organic_compounds,remove.zeroes = FALSE)
 
 #Below code saves multiple plots into individual PNG files. It loops through the list of plots and and for each plot it extracts the tissue name, and the plots for that tissue then saves them in their respective tissue folders.
 save_graphs <- function(graph_list) {
@@ -1112,4 +1006,4 @@ save_graphs <- function(graph_list) {
   }
 }
 #Calling save_graphs function:
-save_graphs(temporal_comparison_results_per_tissue)
+save_graphs(tissue_wise_temporal_variable_analysis)
