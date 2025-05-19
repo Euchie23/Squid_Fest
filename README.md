@@ -33,7 +33,6 @@ The Squid Fest folder contains two projects resulting from a series of interdisc
 ## Projects 🦑🌊 <br>
 ### Squid_Concentrations_Analysis ⏳📈 [Open Folder](./Squid_Concentration_Analysis) <br>
     Task-0-CRM (Methodology validation)
-    [0-Certified_Reference_Materials_CRMs](../Squid_Concentration_Analysis/0-Certified_Reference_Materials_CRMs)
     Task-1-Data_Preprocessing
     Task-2-Detectiion_summary
     Task-3-Data_mining
