@@ -4,7 +4,8 @@ library(grid) # for creating, modifying, and arranging graphical objects ("grobs
 library(dplyr) # for data manipulation
 library(tidyr) # For a collection of R packages used for data manipulation and visualization.
 library(stringr) # For String Manipulation
-library(tibble)
+library(tibble) # for modern, user-friendly reimagining of data frames with better printing and subsetting features.
+library(openxlsx) # for  reading, writing, and editing Excel files directly from R.
 
 
 
@@ -499,7 +500,7 @@ summarizing_and_subsetting_datasets <- function (x, y, classification_categories
   print('This dataset is called final_dataset_for_plotting_by_pollutants')
   print(head(as.data.frame(final_dataset_for_plotting_by_pollutants),10))
   
-  return(list (summarized_categorical_values_full=summarized_categorical_values_full, full_dataset_for_outlier_detection_using_numerical_values=full_dataset_for_outlier_detection_using_numerical_values,input_dataset_numerical_values=input_dataset_numerical_values, final_dataset_for_plotting_by_tissue=final_dataset_for_plotting_by_tissue, final_dataset_for_plotting_by_pollutants=final_dataset_for_plotting_by_pollutants))
+  return(list (detection_summary_count=summarized_categorical_values_full, full_dataset_for_outlier_detection_using_numerical_values=full_dataset_for_outlier_detection_using_numerical_values,input_dataset_numerical_values=input_dataset_numerical_values, final_dataset_for_plotting_by_tissue=final_dataset_for_plotting_by_tissue, final_dataset_for_plotting_by_pollutants=final_dataset_for_plotting_by_pollutants))
 }
 
 
@@ -741,159 +742,40 @@ save_graphs <- function(graph_list) {
 save_graphs(detection_summaries)
 
 
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(gt)
-library(gridExtra)
-library(tibble)
+library(openxlsx)
 
-# Assume your data is in a dataframe called your_data
-# Replace with your actual dataframe name
-df <- detection_summary_count  
+# Extract detection summary dataframe
+df <- detection_summaries[["summarized_and_subsetted_datasets"]][["detection_summary_count"]]
 
-# Capitalize first letter of column names if needed
-colnames(df) <- gsub("^(\\w)", "\\U\\1", colnames(df), perl = TRUE)
+# Extract pollutant types from the first available plot
+table_data <- detection_summaries[["summarized_and_subsetted_datasets"]][["detection_summary_count"]][[2]]
+pollutant_types <- unique(table_data)
 
-# Rearrange columns to have Tissue first, then others
-df <- df %>%
-  select(Year, Pollutant, Tissue, Total_N, BLOD, BLOQ, Detected, Outliers)
-
-# Unique years and pollutants
-years <- unique(df$Year)
-pollutants <- unique(df$Pollutant)
-
-# Helper function to create a spacer tibble with same column names and row count
-make_spacer <- function(n) {
-  tibble(
-    Tissue = rep("", n),
-    BLOD = rep("", n),
-    BLOQ = rep("", n),
-    Detected = rep("", n),
-    Outliers = rep("", n)
-  )
+# Determine output path based on pollutant type
+if (any(grepl("Metal", pollutant_types))) {
+  file_path <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Trace_metals/detection_summary_count_tm.xlsm"
+} else {
+  file_path <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Organic_compounds/detection_summary_count_oc.xlsm"
 }
 
-# Create list to store gt tables by year and pollutant
-tables_by_year <- list()
+# Sheet name to replace
+sheet_name <- "summary"
 
-for (yr in years) {
-  # Filter year data
-  df_year <- df %>% filter(Year == yr)
+# Load or create workbook
+if (file.exists(file_path)) {
+  wb <- loadWorkbook(file_path)
   
-  # List to hold pollutant tables for this year
-  pollutant_tables <- list()
-  
-  for (poll in pollutants) {
-    # Filter pollutant data for the year
-    df_sub <- df_year %>% filter(Pollutant == poll)
-    
-    # Select and reorder columns, Tissue first
-    df_sub <- df_sub %>%
-      select(Tissue, BLOD, BLOQ, Detected, Outliers)
-    
-    # Create gt table and add title above table
-    tbl <- gt(df_sub) %>%
-      tab_header(title = md(paste0("**", poll, "-", yr, "**")))
-    
-    pollutant_tables[[poll]] <- tbl
+  if (tolower(sheet_name) %in% tolower(names(wb))) {
+    removeWorksheet(wb, sheet_name)
   }
-  
-  # Now arrange pollutant tables side-by-side with spacer columns in between
-  # We convert gt tables to grobs for grid.arrange
-  
-  grobs <- list()
-  n_rows <- max(map_int(pollutant_tables, ~nrow(as.data.frame(.x$`_data`))))
-  
-  # For each pollutant table, convert to grob and add spacer if not last
-  for (i in seq_along(pollutant_tables)) {
-    grobs[[length(grobs)+1]] <- gt::as_raw_html(pollutant_tables[[i]])
-    if (i < length(pollutant_tables)) {
-      # spacer as a blank plot with same height
-      spacer <- grid::nullGrob()
-      grobs[[length(grobs)+1]] <- spacer
-    }
-  }
-  
-  # Store grobs list by year
-  tables_by_year[[as.character(yr)]] <- grobs
+  addWorksheet(wb, sheet_name)
+} else {
+  wb <- createWorkbook()
 }
 
-# The above part generates gt tables and tries to arrange grobs but gt tables can't be converted directly to grobs
-# Instead, we can print gt tables individually in RMarkdown or Shiny and rely on layout there.
+# Add new sheet and write data
+addWorksheet(wb, sheet_name)
+writeData(wb, sheet_name, df)
 
-# For a base R approach, we can output tables as data.frames side-by-side with spacer columns
-
-# Alternative base R style: create data.frames with spacer columns for each year and bind them side-by-side
-
-library(purrr)
-
-for (yr in years) {
-  df_year <- df %>% filter(Year == yr)
-  
-  # Get number of rows per pollutant for this year
-  rows_per_pollutant <- df_year %>% 
-    group_by(Pollutant) %>% 
-    summarize(n = n()) %>% 
-    pull(n)
-  
-  max_rows <- max(rows_per_pollutant)
-  
-  pollutant_tables_df <- list()
-  
-  for (poll in pollutants) {
-    df_sub <- df_year %>% filter(Pollutant == poll) %>%
-      select(Tissue, BLOD, BLOQ, Detected, Outliers)
-    
-    # Pad with blank rows to max_rows
-    if (nrow(df_sub) < max_rows) {
-      n_pad <- max_rows - nrow(df_sub)
-      pad <- tibble(
-        Tissue = rep("", n_pad),
-        BLOD = rep("", n_pad),
-        BLOQ = rep("", n_pad),
-        Detected = rep("", n_pad),
-        Outliers = rep("", n_pad)
-      )
-      df_sub <- bind_rows(df_sub, pad)
-    }
-    
-    # Add title row as a separate data.frame (single-row, spanning all columns is tricky in base R)
-    title_row <- tibble(
-      Tissue = paste0(poll, "-", yr),
-      BLOD = rep("", 1),
-      BLOQ = rep("", 1),
-      Detected = rep("", 1),
-      Outliers = rep("", 1)
-    )
-    
-    # Bind title on top of the data
-    table_with_title <- bind_rows(title_row, df_sub)
-    
-    pollutant_tables_df[[poll]] <- table_with_title
-  }
-  
-  # Create spacer column with same number of rows including title row
-  spacer <- tibble(
-    Tissue = rep("", max_rows + 1),
-    BLOD = rep("", max_rows + 1),
-    BLOQ = rep("", max_rows + 1),
-    Detected = rep("", max_rows + 1),
-    Outliers = rep("", max_rows + 1)
-  )
-  
-  # Now bind tables side-by-side with spacer columns between
-  combined <- pollutant_tables_df[[1]]
-  
-  if (length(pollutant_tables_df) > 1) {
-    for (i in 2:length(pollutant_tables_df)) {
-      combined <- bind_cols(combined, spacer, pollutant_tables_df[[i]])
-    }
-  }
-  
-  # Print or write combined table for this year
-  print(combined)
-  
-  # Optionally, save to CSV for inspection
-  # write.csv(combined, paste0("Pollutant_tables_", yr, ".csv"), row.names = FALSE)
-}
+# Save workbook (macros are preserved if .xlsm already existed)
+saveWorkbook(wb, file = file_path, overwrite = TRUE)
