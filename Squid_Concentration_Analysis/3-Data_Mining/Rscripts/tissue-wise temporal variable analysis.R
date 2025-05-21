@@ -495,7 +495,11 @@ coefficient_results_modification <- function(coefficients_accumulated) {
 # Main function: comparing_years_per_tissue_per_variable
 #This function helps explore how different environmental and biological factors, refered to as variables in the analysis, (like distance to land, latitude, and month of capture) relate to pollutant levels in squid tissues. It focuses on how these relationships look within each tissue — like liver, stomach, muscle, and ink sac.For each factor (such as distance to land), the function creates separate sets of graphs for each tissue. Within each graph, you’ll see small panels (called facets), where each panel shows the behavior of a specific pollutant (like a trace metal or an organic compound).The data in each panel is grouped by year (e.g., 2019, 2020, 2021), so it’s easy to spot changes over time. The graphs also include regression lines, which help show whether the factor and the pollutant are positively related, negatively related, or not strongly related.The function handles zero values and applies statistical models (like linear regression) to assess the strength of these patterns. It returns both the plots and the statistical output in a list. This approach helps identify whether environmental or biological factors consistently affect pollutant levels within each tissue across different years.
 comparing_years_per_tissue_per_variable <- function (data_list, remove.zeroes = FALSE){
+  
+  # Extract numeric dataset from list
   dataset_with_numerical_values <- as.data.frame(data_list$dataset_with_numerical_values)
+  
+  #Changing metadata colums from dataset into numeric or factor
   dataset_with_numerical_values[,c(7,8,9,13,14)] =as.numeric(unlist(dataset_with_numerical_values[,c(7,8,9,13,14)]))
   dataset_with_numerical_values[,12]<- cut(as.numeric(dataset_with_numerical_values[,12]), breaks = 4, labels =c(3,4,5,6))
   dataset_with_numerical_values[,15]<- as.character(dataset_with_numerical_values[,15])
