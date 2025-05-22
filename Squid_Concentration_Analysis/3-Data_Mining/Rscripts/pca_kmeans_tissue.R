@@ -6,6 +6,7 @@ library(ggplot2) # for  data visualization
 library(gridExtra) # for multiple ggplot2 plots to be arranged in a grid layout for combined display or export.
 library(grid) # for the grid graphics system in R, which provides low-level functions for creating and controlling complex graphic layouts
 library(RColorBrewer)  #  for Color palettes
+library(stringr) # For String Manipulation
 
 
 #Data Processor Function before doing analysis

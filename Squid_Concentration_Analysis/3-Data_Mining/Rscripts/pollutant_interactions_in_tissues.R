@@ -264,54 +264,50 @@ combined_data <- left_join(
 
 explore_pollutant_interactions <- function(df, metal_cols, organic_cols) {
   
-  #Changing concentration colums from dataset into numeric or factor
-  df[,c(16:29)] =as.numeric(unlist(df[,c(16:29)]))
-
+  # Changing concentration columns into numeric (flattening with unlist can cause issues)
+  # Instead, convert each column individually:
+  cols_to_convert <- c(16:29)
+  df[, cols_to_convert] <- lapply(df[, cols_to_convert], as.numeric)
+  
   # Desired tissue order
   tissue_order <- c("liver", "stomach", "muscle", "inksac")
   
   # Convert to factor to enforce order
   df$Tissue <- factor(df$Tissue, levels = tissue_order)
   
-  # Extract the ordered levels (ensures you're looping in that specific order)
   tissues <- levels(df$Tissue)
   
   for (tissue in tissues) {
     
-    
-    # 📁 Set path where results will be saved
     output_folder <- file.path(
       "Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/pollutant_interactions/", tissue
     )
-    
-    # 📁 Create output folder if it doesn't exist
     dir_create(output_folder)
-    
     
     df_tissue <- df %>% filter(Tissue == tissue)
     
-    # 🎯 Focus on numeric pollutant data
-    df_focus <- df_tissue %>% select(all_of(c(metal_cols, organic_cols))) %>%
-      select(where(is.numeric))
+    # Focus on numeric pollutant data
+    df_focus <- df_tissue %>% select(all_of(c(metal_cols, organic_cols))) %>% select(where(is.numeric))
     
-    
-    # Set threshold
     min_nonzero_prop <- 0.10
-    
-    #Compute the proportion of non-zero values for each column
     nonzero_prop <- colMeans(df_focus != 0, na.rm = TRUE)
+    print(paste("Non-zero proportions for", tissue))
     print(nonzero_prop)
-    # Filter columns to keep only those with ≥ 10% non-zero values
+    
+    # Keep columns with ≥ 10% non-zero values
     df_focus <- df_focus[, nonzero_prop >= min_nonzero_prop]
     
+    # Remove constant columns (zero variance)
+    df_focus <- df_focus[, sapply(df_focus, function(x) sd(x, na.rm = TRUE) > 0)]
     
+    # Check if enough data remains
     if (nrow(df_focus) < 2 || ncol(df_focus) < 2) {
-      cat("⚠️ Skipping tissue", tissue, "- not enough data.\n")
+      cat("⚠️ Skipping tissue", tissue, "- not enough valid data.\n")
       next
     }
     
-    # 🔥 Correlation heatmap
-    cor_matrix_focus <- cor(df_focus, use = "pairwise.complete.obs")
+    # Correlation heatmap
+    cor_matrix_focus <- cor(df_focus, use = "pairwise.complete.obs",method = "spearman")
     
     heatmap_path <- file.path(output_folder, paste0("heatmap_", tissue, ".png"))
     pheatmap(cor_matrix_focus,
@@ -323,12 +319,21 @@ explore_pollutant_interactions <- function(df, metal_cols, organic_cols) {
              filename = heatmap_path)
     cat("✅ Heatmap saved for", tissue, "→", heatmap_path, "\n")
     
-    # 📊 Scatterplot matrix
+    # Scatterplot matrix with error handling
     scatterplot_path <- file.path(output_folder, paste0("scatterplot_", tissue, ".pdf"))
-    pdf(scatterplot_path, width = 10, height = 10)
-    ggpairs(df_focus, title = paste("Scatterplot Matrix -", tissue))
-    dev.off()
-    cat("✅ Scatterplot matrix saved for", tissue, "→", scatterplot_path, "\n")
+    
+    tryCatch({
+      pdf(scatterplot_path, width = 10, height = 10)
+      print(ggpairs(df_focus, title = paste("Scatterplot Matrix -", tissue)))
+      dev.off()
+      cat("✅ Scatterplot matrix saved for", tissue, "→", scatterplot_path, "\n")
+    }, error = function(e) {
+      cat("❌ Error creating scatterplot for", tissue, ":", conditionMessage(e), "\n")
+      # Close PDF device if still open
+      if (dev.cur() != 1) dev.off()
+      # Optionally remove corrupt file
+      if (file.exists(scatterplot_path)) file.remove(scatterplot_path)
+    })
   }
 }
 
