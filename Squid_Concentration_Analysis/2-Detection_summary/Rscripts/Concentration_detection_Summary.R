@@ -594,7 +594,7 @@ visualization <- function(data_list1){
   }else{
     status_levels<- c('BLOD','BLOQ','Outliers','Detected')
     Colors <-setNames( c('#F8766D','#00A9FF','yellow','#00BA38'),status_levels)
-    pollutant_levels <- c("Adipic_acid","Caprolactam","Chlorpyrifos","Ibuprofen","Total")
+    pollutant_levels <- c("Organic_A","Organic_B","Organic_C","Organic_D","Total")
     
     plot_pollutants <-ggplot(final_dataset_for_plotting_by_pollutants, aes(x = factor(pollutant, levels = pollutant_levels), y = Percentage, fill= factor(status, levels = status_levels))) + geom_bar(stat="summary", width=0.97) + scale_fill_manual(values=Colors)+
       coord_cartesian(expand = FALSE)+
@@ -677,105 +677,77 @@ detection_summary <- function(data_list, keep_outliers){
                detection_summary_graph=graph))
 }
 
-detection_summaries <- detection_summary(datasets_for_organic_compounds, keep_outliers=TRUE)
+detection_summaries <- detection_summary(datasets_for_trace_metals, keep_outliers=TRUE)
 
-#Below code saves multiple plots into individual PNG files. It loops through the list of plots and and for each plot it extracts its name, and the plot then saves it in one .png file using grid.draw()
-save_graphs <- function(graph_list) {
+#Below code saves multiple plots and data table into individual PNG files and excel files for Trace metals and organic compounds. It loops through the list of plots and and for each plot it extracts its name, and the plot then saves it in one .png file using grid.draw() and the data tables are also saved as in the same file as an execel worksheet in an excel workbook. Then the excel uses VBA to produce a pdf of the respective data table.
+save_detection_summary_outputs <- function(detection_summary_list) {
   
-  # Extract pollutant types from the first available plot
+  # Extract plot and data
+  graph_list <- detection_summary_list[["detection_summary_graph"]]
+  df <- detection_summary_list[["summarized_and_subsetted_datasets"]][["detection_summary_count"]]
   
-  plot_data <- graph_list[["detection_summary_graph"]][["Concentration Detection Summary using pollutants"]][[1]]
+  # Get plot data for pollutant type check
+  example_plot_data <- graph_list[["Concentration Detection Summary using pollutants"]][[1]]
+  pollutant_types <- unique(example_plot_data$pollutant)
   
-  pollutant_types <- unique(plot_data$pollutant) 
-  
-  
-  # Define the folder where you want to save the PNG files 
+  # Decide output folder and Excel file path
   if (any(grepl("Metal", pollutant_types))) {
-    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots/Trace_metals")
-  }else{
-    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots/Organic_compounds")  
+    output_folder <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Trace_metals"
+    excel_file <- file.path(output_folder, "detection_summary_count_tm.xlsm")
+  } else {
+    output_folder <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Organic_compounds"
+    excel_file <- file.path(output_folder, "detection_summary_count_oc.xlsm")
   }
   
-  # Create the folder if it doesn't exist
+  # Create output folder if needed
   if (!dir.exists(output_folder)) {
-    dir.create(output_folder)
+    dir.create(output_folder, recursive = TRUE)
   }
   
-  #Getting plot names
-  plot_names <- graph_list[["detection_summary_graph"]]
-
-  # Loop through actual ggplot objects in graph_list
-  for (plot_name in names(plot_names)) {
-    plot_object <- graph_list[["detection_summary_graph"]][[plot_name]]
+  # Save plots as PNG
+  for (plot_name in names(graph_list)) {
+    plot_obj <- graph_list[[plot_name]]
     
-    # In case it's wrapped in a list like graph_list$X$graph
-    if (is.list(plot_object) && inherits(plot_object[[1]], "gg")) {
-      plot_object <- plot_object[[1]]
+    # Unwrap if nested
+    if (is.list(plot_obj) && inherits(plot_obj[[1]], "gg")) {
+      plot_obj <- plot_obj[[1]]
     }
     
-    if (!inherits(plot_object, "gg")) {
+    if (!inherits(plot_obj, "gg")) {
       cat("⚠️ Skipping", plot_name, "- not a ggplot object.\n")
       next
     }
     
-    # Use tryCatch to handle all errors
     tryCatch({
-      # Create output file path
-      output_path <- file.path(output_folder, paste0(plot_name, ".png"))
-      
-      # Save PNG
-      png(output_path, width = 1400, height = 800)
-      
-      #Converts the ggplot object into a "grob" (graphical object) then draws it on a PNG to use all available space.
-      grid.draw(ggplotGrob(plot_object))
-      
+      png_path <- file.path(output_folder, paste0(plot_name, ".png"))
+      png(png_path, width = 1400, height = 800)
+      grid.draw(ggplotGrob(plot_obj))
       dev.off()
-      cat("Saved:", output_path, "\n")
-      
+      cat("✅ Plot saved:", png_path, "\n")
     }, error = function(e) {
-      cat("⚠️ Error in", plot_name, ":", e$message, "\n")
+      cat("⚠️ Error saving", plot_name, ":", e$message, "\n")
     })
   }
-}
-
-#Calling save_graphs function:
-save_graphs(detection_summaries)
-
-
-library(openxlsx)
-
-# Extract detection summary dataframe
-df <- detection_summaries[["summarized_and_subsetted_datasets"]][["detection_summary_count"]]
-
-# Extract pollutant types from the first available plot
-table_data <- detection_summaries[["summarized_and_subsetted_datasets"]][["detection_summary_count"]][[2]]
-pollutant_types <- unique(table_data)
-
-# Determine output path based on pollutant type
-if (any(grepl("Metal", pollutant_types))) {
-  file_path <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Trace_metals/detection_summary_count_tm.xlsm"
-} else {
-  file_path <- "Squid_Concentration_Analysis/2-Detection_summary/Detection_summary_plots_and_tables/Organic_compounds/detection_summary_count_oc.xlsm"
-}
-
-# Sheet name to replace
-sheet_name <- "summary"
-
-# Load or create workbook
-if (file.exists(file_path)) {
-  wb <- loadWorkbook(file_path)
   
-  if (tolower(sheet_name) %in% tolower(names(wb))) {
-    removeWorksheet(wb, sheet_name)
+  # Save detection summary data to Excel
+  sheet_name <- "summary"
+  
+  if (file.exists(excel_file)) {
+    wb <- loadWorkbook(excel_file)
+    
+    existing_sheets <- tolower(names(wb))
+    if (sheet_name %in% existing_sheets) {
+      removeWorksheet(wb, names(wb)[which(existing_sheets == sheet_name)])
+    }
+  } else {
+    wb <- createWorkbook()
   }
+  
   addWorksheet(wb, sheet_name)
-} else {
-  wb <- createWorkbook()
+  writeData(wb, sheet_name, df)
+  saveWorkbook(wb, file = excel_file, overwrite = TRUE)
+  
+  cat("✅ Data saved to Excel:", excel_file, "\n")
 }
-
-# Add new sheet and write data
-addWorksheet(wb, sheet_name)
-writeData(wb, sheet_name, df)
-
-# Save workbook (macros are preserved if .xlsm already existed)
-saveWorkbook(wb, file = file_path, overwrite = TRUE)
+#Calling save_graphs function:
+save_detection_summary_outputs(detection_summaries)
