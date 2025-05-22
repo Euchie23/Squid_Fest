@@ -8,8 +8,8 @@ The folder includes Rscripts used for:
 - **Detection_Summary_Tables**: Summary statistics for each compound and tissue, including detection counts  
 - **BLOD_BLOQ_Frequency**: Frequencies of samples falling below detection (BLOD) or quantification (BLOQ) limits  
 - **Outlier_Analysis**: Identification of extreme values outside expected concentration ranges
-    -See Detection Summary Tables for Trace Metals
-    -See Detection Summary Tables for Organic Compounds 
+    - See Detection Summary Tables for Trace Metals
+    - See Detection Summary Tables for Organic Compounds 
 - **Visualization**: Barplots showing detection summary per compound, tissue, and sampling year
     - Trace Metals
       - See Barplots for detection summary per compound
