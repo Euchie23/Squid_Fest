@@ -574,7 +574,7 @@ visualization <- function(data_list1){
       facet_wrap(vars(year), scales ="free_x", ncol=3, drop = FALSE)+ theme(strip.text = element_text(size = 15, colour = 'black'), axis.text.x = element_text(size = 10, colour = 'black'))
     print(plot_pollutants)
     list0<-append(list(plot_pollutants),list0, 0)
-    name0 <- paste("Concentration Detection Summary using pollutants", sep = "")
+    name0 <- paste("Concentration_Detection_Summary_using_pollutants", sep = "")
     list0names <- append(list0names,name0)
     
     status_levels<- c('BLOD','BLOQ','Outliers','Detected')
@@ -589,7 +589,7 @@ visualization <- function(data_list1){
       facet_wrap(vars(year), scales ="free_x", ncol=3, drop = FALSE)+ theme(strip.text = element_text(size = 15, colour = 'black'), axis.text.x = element_text(size = 10, colour = 'black'))
     print(plot_tissues)
     list0<-append(list(plot_tissues),list0, 0)
-    name0 <- paste("Concentration Detection Summary using tissues", sep = "")
+    name0 <- paste("Concentration_Detection_Summary_using_tissues", sep = "")
     list0names <- append(list0names,name0)
   }else{
     status_levels<- c('BLOD','BLOQ','Outliers','Detected')
@@ -605,7 +605,7 @@ visualization <- function(data_list1){
       facet_wrap(vars(year), scales ="free_x", ncol=3, drop = FALSE)+ theme(strip.text = element_text(size = 15, colour = 'black'), axis.text.x = element_text(size = 10, colour = 'black'))
     print(plot_pollutants)
     list0<-append(list(plot_pollutants),list0, 0)
-    name0 <- paste("Concentration Detection Summary using pollutants", sep = "")
+    name0 <- paste("Concentration_Detection_Summary_using_pollutants", sep = "")
     list0names <- append(list0names,name0)
     
     status_levels<- c('BLOD','BLOQ','Outliers','Detected')
@@ -620,7 +620,7 @@ visualization <- function(data_list1){
       facet_wrap(vars(year), scales ="free_x", ncol=3, drop = FALSE)+ theme(strip.text = element_text(size = 15, colour = 'black'), axis.text.x = element_text(size = 10, colour = 'black'))
     print(plot_tissues)
     list0<-append(list(plot_tissues),list0, 0)
-    name0 <- paste("Concentration Detection Summary using tissues", sep = "")
+    name0 <- paste("Concentration_Detection_Summary_using_tissues", sep = "")
     list0names <- append(list0names,name0)
   }  
   
@@ -687,7 +687,7 @@ save_detection_summary_outputs <- function(detection_summary_list) {
   df <- detection_summary_list[["summarized_and_subsetted_datasets"]][["detection_summary_count"]]
   
   # Get plot data for pollutant type check
-  example_plot_data <- graph_list[["Concentration Detection Summary using pollutants"]][[1]]
+  example_plot_data <- graph_list[["Concentration_Detection_Summary_using_pollutants"]][[1]]
   pollutant_types <- unique(example_plot_data$pollutant)
   
   # Decide output folder and Excel file path

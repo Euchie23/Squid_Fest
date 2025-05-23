@@ -381,36 +381,15 @@ get_y_axis_upper_limit <- function (dataset){
   #changing class of concentration values from character to numeric
   dataset$Tissue <- as.character(dataset$Tissue)
   
-  # if(length(dataset$concentrations)!=0){
-  #   # Identify outliers: concentrations above the 90th percentile
-  #   outlier  <-which(dataset$concentrations > quantile(dataset$concentrations, 0.95))  # Find concentrations greater than the 'quantile_level_for_outliers' inserted when running the parent function.
-  #   
-  #   outliers <- dataset$concentrations[c(outlier)] # Extract the outlier concentrations
-  # }else{
-  #   outliers <- 0
-  # }
-  
   # Handle y_upper_limit
   concentrations <- dataset$concentrations
   ycoord <- ifelse(any(!is.na(concentrations)), max(concentrations, na.rm = TRUE), 1)
   
-  # If there are outliers, remove them and calculate the upper limit for the y-axis
-  # if(length(outliers)!=0){
-    #pollutant <- dataset_subsetted_by_tissue[-c(outlier),] # Remove outliers from the data
-    #minimum_outlier <- min(outliers) # Find the minimum value among outliers
-    
     y_upper_limit <-ycoord # Set the upper limit for the y-axis based on the smallest outlier
     y_axis_dataframe[1,1] <- unique(dataset$Tissue)
     y_axis_dataframe[1,2] <- unique(dataset$pollutants)
     y_axis_dataframe[1,3] <- y_upper_limit
     y_axis_dataframe_final <- rbind( y_axis_dataframe_final,y_axis_dataframe)
-  #}else{
-  #   y_upper_limit <-0 # If no outliers, set y_upper_limit to 0
-  #   y_axis_dataframe[1,1] <- unique(dataset$Tissue)
-  #   y_axis_dataframe[1,2] <- unique(dataset$pollutants)
-  #   y_axis_dataframe[1,3] <- y_upper_limit
-  #   y_axis_dataframe_final <- rbind( y_axis_dataframe_final,  y_axis_dataframe)
-  # }
   # Return the final dataframe with the coefficients
   return ( y_axis_dataframe_final)
 }
