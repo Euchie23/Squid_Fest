@@ -261,8 +261,6 @@ datasets_for_organic_compounds <- process_dataset(organiccompounds_data, keep_LO
 # These plots are saved in organized folders by pollutant type and tissue.
 # The function also provides numerical summaries for each cluster, helping interpret which pollutants dominate each group. This approach supports identifying contamination patterns, comparing temporal pollutant profiles, and discovering distinct sample groupings based on chemical makeup.
 
-# Full Function: PCA + KMeans + Metadata Kruskal-Wallis with p-values printed on plots
-
 # Full Function: PCA + KMeans + Metadata Kruskal-Wallis with p-values on plots
 pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
   
@@ -468,5 +466,5 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
 }
 
 
-# Run the function (example)
+# Call the function 
 pca_kmeans_cluster_explorer(datasets_for_trace_metals, remove.vars = TRUE)

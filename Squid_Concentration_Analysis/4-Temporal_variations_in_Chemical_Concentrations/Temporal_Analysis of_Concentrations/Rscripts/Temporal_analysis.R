@@ -592,12 +592,13 @@ plot_names <- c()
 
 if(grepl("Metal", pollutant_name)) { # if Metal is detected  as the name of the first dataset in the list then run the below code fro trace metals.
   filename <- "TMicons//" # trace metal file containing icons for classification
-  #recommended levels for trace metals and organic compounds in mg/kg accumulated from different datasets:
+  #recommended levels for trace metals in mg/kg accumulated from different datasets:
   recommended_levels <- data.frame(pollutants=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E"), 
                    lower_recommended_levels=c(0.01,2,0.0016,30,100,0.1,0.05,8,0.45,30), upper_recommended_levels=c(rep(NA, 10)), 
                    levels=c('Grasso et al. 2021: 0.01mg/kg','FAO/WHO: <0.05-2mg/kg','EFSA: 0.0016mg/kg','ANVISA: 30mg/kg', 'FAO/WHO: 100mg/kg','Brodziak-Dopierała et al. 2023: 0.1mg/kg','FAO/WHO: <0.05-2mg/kg','FAO/WHO: <0.5-8mg/kg','Makridis and Amberger, 1996; LaCoste et al. 2001:\n <0.45-2.28mg/kg (permissible range for animal feed)','FAO/WHO: <30-100mg/kg'),oral_reference_dosage=c(0.005, 0.01, 0.03, 0.04, 0.7, 0.1, 0.003, 0.04,0.00001, 0.3))
 }else{ # if "Metal" is not detected  as the name of the first dataset in the list then run the below code for organic compounds.
   filename <- "OCicons//" # Organic compound file containing icons for classification
+  #recommended levels for organic compounds in mg/kg accumulated from different datasets:
   recommended_levels <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), lower_recommended_levels=c(470, 50,0.01,40), upper_recommended_levels=c(NA, NA,NA,NA), levels=c('EPA: 470mg/kg/day','EPA: 50mg/kg/day', 'FAO/WHO: 0.01mg/kg/day','The Mayo Clinic: 40mg/kg/day'))
 }
 
@@ -703,8 +704,8 @@ temporal_analysis_step3 <- temporal_analysis_step3 (temporal_analysis_step2) #Ru
 
 
 
-# Calling plots for visualization from saved list in the temporal_analysis_step3_dataset.----
-do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5, 6, 7,8,9,10)], ncol=5)) #Trace Metals
-
-do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5,7,10)], ncol=4)) #Organic Compounds
+# # Calling plots for visualization from saved list in the temporal_analysis_step3_dataset.----
+# do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5, 6, 7,8,9,10)], ncol=5)) #Trace Metals
+# 
+# do.call("grid.arrange", c(temporal_analysis_step3$plots[c(1,2,3,4,5,7,10)], ncol=4)) #Organic Compounds
 
