@@ -250,28 +250,190 @@ datasets_for_trace_metals <- process_dataset_for_detection_summary(tracemetals_d
 organiccompounds_data <- read.csv("Squid_Concentration_Analysis/1-Data_Preprocessing/Final_Results_For_Analysis/Final_OCresults_mgkg.csv", header = TRUE)
 datasets_for_organic_compounds <- process_dataset_for_detection_summary(organiccompounds_data, keep_LOQ_values = FALSE)
 
-# Helper function to calculate and store y_axis_upper_limit for the different tissues affected by each pollutant.
-get_y_axis_upper_limit <- function (dataset){
+#' Helper function to identify pollutant type and prepare concentration and reference data
+get_pollutant_info <- function(df) {
+ 
+  if (grepl("Metal", colnames(df)[16])) {
+    # For trace metals
+    range <- colnames(df[16:25])
+    number_range <- 16:25
+    df[, number_range] <- lapply(df[, number_range], as.numeric)
+    
+    recommended_levels <- data.frame(
+      pollutants = c("Metal_F", "Metal_G", "Metal_B", "Metal_D", "Metal_A", "Metal_H", "Metal_C", "Metal_J", "Metal_I", "Metal_E"),
+      lower_recommended_levels = c(0.01, 2, 0.0016, 30, 100, 0.1, 0.05, 8, 0.45, 30),
+      upper_recommended_levels = rep(NA, 10),
+      levels = c('Grasso et al. 2021: 0.01mg/kg','FAO/WHO: <0.05-2mg/kg','EFSA: 0.0016mg/kg','ANVISA: 30mg/kg', 'FAO/WHO: 100mg/kg','Brodziak-Dopierała et al. 2023: 0.1mg/kg','FAO/WHO: <0.05-2mg/kg','FAO/WHO: <0.5-8mg/kg','Makridis and Amberger, 1996; LaCoste et al. 2001:\n <0.45-2.28mg/kg (permissible range for animal feed)','FAO/WHO: <30-100mg/kg'),
+      oral_reference_dosage = c(0.005, 0.01, 0.03, 0.04, 0.7, 0.1, 0.003, 0.04, 0.00001, 0.3)
+    )
+  } else {
+    # For organics
+    range <- colnames(df[16:19])
+    number_range <- 16:19
+    df[, number_range] <- lapply(df[, number_range], as.numeric)
+    
+    recommended_levels <- data.frame(
+      pollutants = c("Organic_A", "Organic_B", "Organic_C", "Organic_D"),
+      lower_recommended_levels = c(470, 50, 0.01, 40),
+      upper_recommended_levels = c(NA, NA, NA, NA),
+      levels = c('EPA: 470mg/kg/day','EPA: 50mg/kg/day', 'FAO/WHO: 0.01mg/kg/day','The Mayo Clinic: 40mg/kg/day'),
+      oral_reference_dosage = c(2, 0.5, 0.01, 1200)
+    )
+  }
   
-  # Create an empty data frame to store the results of the coefficients. final  y_axis_dataframe_final where coefficient1 is accumulated
-  y_axis_dataframe_final <- data.frame(matrix(ncol=2, nrow = 0))
-  colnames( y_axis_dataframe_final) <- c('Year','y_axis_upper_limit')
-  
-  # Temporary data frame to store coefficients for the current iteration
-  y_axis_dataframe <- data.frame(matrix(ncol=2, nrow = 0))
-  colnames( y_axis_dataframe) <- colnames( y_axis_dataframe_final)
+  list(range = range, number_range = number_range, df = df, recommended_levels = recommended_levels)
+}
 
+#' Helper function to reshape data to long format, filter for 'muscle', join recommended dosage
+reshape_and_join_data <- function(df, range, recommended_levels, remove_zeroes) {
+  long_df <- df %>%
+    pivot_longer(all_of(range), names_to = "pollutant", values_to = "concTai") %>%
+    subset(Tissue == 'muscle') %>%
+    mutate(concArg = concTai, EDIgenpopArg = NA, EDIgenpopTai = NA)
   
-  # Handle y_upper_limit
-  concentrations <- dataset$concTai
-  y_scales <- ifelse(any(!is.na(concentrations)), max(concentrations, na.rm = TRUE), 1)
+  if (remove_zeroes) {
+    long_df <- subset(long_df, concTai != 0)
+  }
   
-  y_upper_limit <-y_scales # Set the upper limit for the y-axis based on the smallest outlier
-  y_axis_dataframe[1,1] <- unique(dataset$Year)
-  y_axis_dataframe[1,2] <- y_upper_limit
-  y_axis_dataframe_final <- rbind( y_axis_dataframe_final,y_axis_dataframe)
-  # Return the final dataframe with the coefficients
-  return ( y_axis_dataframe_final)
+  long_df <- left_join(long_df, recommended_levels, by = c('pollutant' = 'pollutants'))
+  return(long_df)
+}
+
+#' Helper function to calculate EDI and HQ statistics (mean and 95th percentile) for one pollutant/year
+calculate_THQ <- function(subset_df, pollutant, year) {
+  ord <- unique(subset_df$oral_reference_dosage)
+  Arg_concentration_mean <- mean(subset_df$concArg, na.rm = TRUE)
+  Tai_concentration_mean <- mean(subset_df$concTai, na.rm = TRUE)
+  Arg_EDI_mean <- (6.78 * Arg_concentration_mean) / 65 # 65(kg) is the average weight of the general population in Argentina and the 6.78(kg) is the average amount of seafood eaten per day by the general population
+  Tai_EDI_mean <- (29.76 * Tai_concentration_mean) / 65 # 65(kg) is the average weight of the general population in Argentina and the 29.76(kg) is the average amount of seafood eaten per day by the general population
+  Arg_HQ_mean <- Arg_EDI_mean / ord
+  Tai_HQ_mean <- Tai_EDI_mean / ord
+  Arg_concentration_95_percentile <- quantile(subset_df$concArg, 0.95, na.rm = TRUE)
+  Tai_concentration_95_percentile <- quantile(subset_df$concTai, 0.95, na.rm = TRUE)
+  Arg_EDI_95_percentile <- (6.78 * Arg_concentration_95_percentile) / 65
+  Tai_EDI_95_percentile <- (29.76 * Tai_concentration_95_percentile) / 65
+  Arg_HQ_95_percentile <- Arg_EDI_95_percentile / ord
+  Tai_HQ_95_percentile <- Tai_EDI_95_percentile / ord
+  
+  return(data.frame(
+    Year = year,
+    pollutant = pollutant,
+    oral_reference_dosage = ord,
+    Arg_concentration_mean = Arg_concentration_mean,
+    Tai_concentration_mean = Tai_concentration_mean,
+    Arg_EDI_mean = Arg_EDI_mean,
+    Tai_EDI_mean = Tai_EDI_mean,
+    Arg_HQ_mean = Arg_HQ_mean,
+    Tai_HQ_mean = Tai_HQ_mean,
+    Arg_concentration_95_percentile = Arg_concentration_95_percentile,
+    Tai_concentration_95_percentile = Tai_concentration_95_percentile,
+    Arg_EDI_95_percentile = Arg_EDI_95_percentile,
+    Tai_EDI_95_percentile = Tai_EDI_95_percentile,
+    Arg_HQ_95_percentile = Arg_HQ_95_percentile,
+    Tai_HQ_95_percentile = Tai_HQ_95_percentile
+  ))
+}
+
+#' Helper function to loop over pollutants for a given year and compute THQ (Target hazard quotient) summaries
+calculate_yearly_summary <- function(data_long, pollutants, year) {
+  result_list <- list()
+  for (poll in pollutants) {
+    sub_df <- subset(data_long, pollutant == poll & Year == year)
+    if (nrow(sub_df) > 0) {
+      thq <- calculate_THQ(sub_df, poll, year)
+    } else {
+      # Handle missing data
+      thq <- data.frame(matrix(0, nrow = 1, ncol = 15))
+      colnames(thq) <- c("Year", "pollutant", "oral_reference_dosage",
+                         "Arg_concentration_mean", "Tai_concentration_mean",
+                         "Arg_EDI_mean", "Tai_EDI_mean",
+                         "Arg_HQ_mean", "Tai_HQ_mean",
+                         "Arg_concentration_95_percentile",    "Tai_concentration_95_percentile",
+                        "Arg_EDI_95_percentile", "Tai_EDI_95_percentile",
+                         "Arg_HQ_95_percentile", "Tai_HQ_95_percentile")
+      thq$Year <- year
+      thq$pollutant <- poll
+    }
+    result_list[[length(result_list) + 1]] <- thq
+  }
+  return(do.call(rbind, result_list))
+}
+
+
+#' Helper function to generate Hazard Quotient plots per pollutant
+generate_hq_plot <- function(df, title, x_lab, pollutant_levels, fill_title) {
+  ggplot(df, aes(x = factor(pollutant, levels = pollutant_levels), y = values, fill = countries)) +
+    geom_bar(stat = 'summary', color = "black", position = position_dodge(), width = 0.9) +
+    coord_cartesian(ylim = c(0, 1.5))+
+    coord_cartesian(expand = FALSE)+
+    geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+    labs(title = title, y = "General Population HQ values", x = x_lab, fill = fill_title)
+}
+
+#' Helper function to generate Total Hazard Quotient plots per year
+generate_total_hq_plot <- function(df, title, x_levels, x_lab, fill_title) {
+  ggplot(df, aes(x = factor(countries, levels = x_levels), y = values, fill = countries)) +
+    geom_bar(stat = 'summary', color = "black", position = position_dodge(), width = 0.9) +
+    coord_cartesian(ylim = c(0, 1.5))+
+    coord_cartesian(expand = FALSE)+
+    geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+    labs(title = title, y = "General Population HQ values", x = x_lab, fill = fill_title) +
+    theme(axis.text.x = element_text(colour = 'black', angle = 90))
+}
+
+
+#' Master plot generation function to create HQ plots for individual pollutants and total pollutants for each year
+create_yearly_plots <- function(year, dataset, is_metal = TRUE) {
+  #recoding
+  dataset1 <- dataset %>%
+    mutate(countries = recode(countries,
+                         "Arg_HQ_mean" = "Argentina HQ (mean)",
+                          "Tai_HQ_mean" = "Taiwan HQ (mean)",
+    "Arg_HQ_95_percentile" = "Argentina HQ (95th percentile)",
+    "Tai_HQ_95_percentile" = "Taiwan HQ (95th percentile)"))
+  
+  dataset2 <- dataset %>%
+    mutate(countries = recode(countries,
+                         "Arg_HQ_mean" = "Argentina HQ (mean)",
+                         "Tai_HQ_mean" = "Taiwan HQ (mean)",
+                         "Arg_HQ_95_percentile" = "Argentina HQ (95th percentile)",
+                         "Tai_HQ_95_percentile" = "Taiwan HQ (95th percentile)"))
+  
+
+  colz <- c('Argentina HQ (mean)', 'Taiwan HQ (mean)', 
+            'Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
+  
+  if (is_metal) {
+    pollutant_levels <- c("Metal_A", "Metal_B", "Metal_C", "Metal_D", 
+                          "Metal_E", "Metal_F", "Metal_G", "Metal_H", 
+                          "Metal_I", "Metal_J")
+    x_lab <- "Trace Metals"
+  } else {
+    pollutant_levels <- c("Organic_A", "Organic_B", "Organic_C", "Organic_D", "Total_HQ")
+    x_lab <- "Organic Compounds"
+  }
+  
+  title_base <- paste(year, "Hazard Quotient(HQ)")
+  
+  cat("\n---------------------------------\n")
+  df_main <- dataset1 %>% group_by(pollutant) %>% filter(Year == year)
+  print(head(as.data.frame(df_main)))
+  
+  #Dataset for yearly plots with pollutants on the x axis
+
+  df_total <- dataset2 %>%
+    filter(Year == year) %>%
+    group_by(Year, countries) %>%
+    summarise(values = sum(values, na.rm = TRUE), .groups = 'drop') %>%
+    mutate(pollutant = "Total_HQ") %>%
+    select(Year, pollutant, everything())  # Order columns if needed
+  #print head of dataset
+    print(head(as.data.frame(df_total)))
+  
+  plt1 <- generate_hq_plot(df_main, title_base, x_lab, pollutant_levels, "Countries")
+  plt2 <- generate_total_hq_plot(df_total, paste(year, "Total Hazard Quotient(HQ)"), colz, x_lab, "Countries")
+  
+  return(list(plt1, plt2))
 }
 
 
@@ -282,357 +444,99 @@ get_y_axis_upper_limit <- function (dataset){
 # - HQ values for both countries, which are ratios of EDI to oral reference doses
 #
 # These metrics are returned in a combined summary table that can be used to assess how pollutant exposure changes over time and whether it exceeds safety levels.
-EDI_and_HQ_calculation <- function(data_list, remove.zeroes=FALSE){
+EDI_and_HQ_calculations <- function(data_list, remove.zeroes = FALSE) {
+  df <- data_list$dataset_with_numerical_values
   
-  dataset_with_numerical_values <- data_list$dataset_with_numerical_values
+  # Detect pollutant type and reference levels
+  info <- get_pollutant_info(df)
+  df <- info$df
+  range <- info$range
+  number_range <- info$number_range
+  recommended_levels <- info$recommended_levels
   
-  # Initialize empty lists for storing results----
-  list0 <- list()
-  list1 <- list()
-  list2 <- list()
-  list3 <- list()
-  list0names <- c()
-  list1names <- c()
-  list2names <- c()
-  list3names <- c()
-  # Determine pollutant range and subset the dataset based on its presence----
-  if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
-    # Trace metals subset
-    range <- colnames(dataset_with_numerical_values[16:25])
-    number_range <- 16:25
+  # Reshape and filter data
+  long_df <- reshape_and_join_data(df, range, recommended_levels, remove.zeroes)
+  
+  # Compute THQ values year by year
+  years <- unique(df$Year)
+  pollutants <- colnames(df)[number_range]
+  
+  #Creating empty lists
+  list0 <- list(); list1 <- list(); list2 <- list(); list3 <- list()
+  
+  for (year in years) {
+    #to get pollution summary per year and save it as the final df after combining the rows
+    all_results <- data.frame(matrix(ncol=15, nrow = 0))
+    #creating list to save plots names
+    list12names <- list()
+    yearly_data <- calculate_yearly_summary(long_df, pollutants, year)
+    all_results <-rbind(all_results, yearly_data) 
     
-    #changing concentration data to numeric
-    dataset_with_numerical_values[, number_range] <- lapply(dataset_with_numerical_values[, number_range], as.numeric)
+    #rounding all values in columns 4 to 15
+    all_results[,c(4:15)] <- round(all_results[,c(4:15)],2)
+    # Selecting specific columns (HQ metrics by country) to reshape into long format
+   columz=c("Arg_HQ_mean","Tai_HQ_mean","Arg_HQ_95_percentile","Tai_HQ_95_percentile")
     
-    #recommended levels for trace metals in mg/kg accumulated from different datasets:
-    recommended_levels <- data.frame(pollutants=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E"), 
-                                     lower_recommended_levels=c(0.01,2,0.0016,30,100,0.1,0.05,8,0.45,30), upper_recommended_levels=c(rep(NA, 10)), 
-                                     levels=c('Grasso et al. 2021: 0.01mg/kg','FAO/WHO: <0.05-2mg/kg','EFSA: 0.0016mg/kg','ANVISA: 30mg/kg', 'FAO/WHO: 100mg/kg','Brodziak-Dopierała et al. 2023: 0.1mg/kg','FAO/WHO: <0.05-2mg/kg','FAO/WHO: <0.5-8mg/kg','Makridis and Amberger, 1996; LaCoste et al. 2001:\n <0.45-2.28mg/kg (permissible range for animal feed)','FAO/WHO: <30-100mg/kg'),oral_reference_dosage=c(0.005, 0.01, 0.03, 0.04, 0.7, 0.1, 0.003, 0.04,0.00001, 0.3))
-  } else {
-    # Organic compounds subset
-    range <- colnames(dataset_with_numerical_values[16:19])
-    number_range <- 16:19
+
+   # Reshaping the dataset from wide to long format for easier comparison across countries and percentiles
+    long_yearly_data <- as.data.frame(yearly_data %>% pivot_longer(cols = all_of(columz), names_to = "countries", values_to = "values"))
+    is_metal <- grepl("Metal", colnames(df)[16])  # Or some smarter check
+    dataset <- long_yearly_data  # Dataset for yearly plots with pollutants on the x axis
+   
+    plots <- create_yearly_plots(year, dataset, is_metal)
     
-    #changing concentration data to numeric
-    dataset_with_numerical_values[, number_range] <- lapply(dataset_with_numerical_values[, number_range], as.numeric)
-    
-    #recommended levels for organic compounds in mg/kg accumulated from different datasets:
-    recommended_levels <- data.frame(pollutants=c("Organic_A","Organic_B","Organic_C","Organic_D"), lower_recommended_levels=c(470, 50,0.01,40), upper_recommended_levels=c(NA, NA,NA,NA), levels=c('EPA: 470mg/kg/day','EPA: 50mg/kg/day', 'FAO/WHO: 0.01mg/kg/day','The Mayo Clinic: 40mg/kg/day'), oral_reference_dosage=c(2,0.5,0.01,1200))
-  }
-  
-  #subsetting dataset and getting needed vectors for further analysis
-  subsetted_dataset <-dataset_with_numerical_values[,c(number_range,3, 4, 5, 6, 7)]
-  years <- levels(factor(dataset_with_numerical_values[,3]))
-  pollutants <- colnames(dataset_with_numerical_values)[number_range]
-  subsetted_dataframe <-subsetted_dataset
-  
-  #making empty datasets for further analysis and savibg data
-  y_scales <- data.frame(matrix(ncol=3, nrow = 0))
-  tissues <- levels(factor(dataset_with_numerical_values[,6]))
-  results_dataframe_0 <- data.frame(matrix(ncol=15, nrow = 0)) 
-  results_dataframe_1 <- data.frame(matrix(ncol=15, nrow = 0))
-  colnames(results_dataframe_0) <- c('Year','pollutant','oral_reference_dosage','ConcentrationArg (mean)','ConcentrationTai (mean)','Argentina EDI(mean)','Taiwan EDI(mean)', 'Argentina HQ (mean)','Taiwan HQ (mean)','ConcentrationArg (95th percentile)', 'ConcentrationTai (95th percentile)','Argentina EDI (95th percentile)','Taiwan EDI (95th percentile)', 'Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-  colnames(results_dataframe_1) <- c('Year','pollutant','oral_reference_dosage','ConcentrationArg (mean)','ConcentrationTai (mean)','Argentina EDI(mean)','Taiwan EDI(mean)', 'Argentina HQ (mean)','Taiwan HQ (mean)','ConcentrationArg (95th percentile)', 'ConcentrationTai (95th percentile)','Argentina EDI (95th percentile)','Taiwan EDI (95th percentile)', 'Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-  full_results_dataframe <- data.frame(matrix(ncol=15, nrow = 0), check.names = FALSE)
-  full_results_dataframe1 <- data.frame(matrix(ncol=15, nrow = 0), check.names = FALSE)
-  colnames(full_results_dataframe) <- colnames(results_dataframe_0)
-  colnames(full_results_dataframe1) <- colnames(results_dataframe_0)
-  
-  #Changing subsetted data into long format for statistical analysis
-  if(remove.zeroes==FALSE){
-    long_subsetted_dataframe<- subsetted_dataframe %>% pivot_longer(all_of(range), names_to = "pollutant", values_to = "concTai")%>%subset(Tissue == 'muscle')%>%mutate(concArg=NA)%>%mutate(EDIgenpopArg=NA)%>%mutate(EDIgenpopTai=NA)
-  }else{
-    long_subsetted_dataframe<- subsetted_dataframe %>% pivot_longer(all_of(range), names_to = "pollutant", values_to = "concTai")%>%subset(concTai !=0)%>%subset(Tissue == 'muscle')%>%mutate(EDIgenpopArg=NA)%>%mutate(EDIgenpopTai=NA)
-  }
-  
-  #further subsetting on long_subsetted dataframe by pollutants
-  long_subsetted_dataframe1 <-long_subsetted_dataframe%>% left_join(recommended_levels, by=c('pollutant'='pollutants'))
-  
-  #Target Hazard Quotient 1 function for THQ calculation 
-  THQcalc <- function(x){
-    for (i in 1:nrow(x)){
-      if(x[i,'Tissue']!= 'muscle'){
-        x[i,'concArg'] <- NA
-      }else{
-        x[i,'concArg'] <- x[i,'concTai']
-      }
+    if (year == "2019") {
+      list0 <- plots
+    } else if (year == "2020") {
+      list1 <- plots
+    } else if (year == "2021") {
+      list2 <- plots
     }
-    return(x)
-  }
-  long_subsetted_dataframe2 <-THQcalc(long_subsetted_dataframe1)
-  
-  #Using for loop to full in empty dataframe 1 (Hazard Qutotient per pollutant per country) by conducting descriptive stats and EDI calculations for Argentina and Taiwan.
-  for(h in 1:length(years)){
-    subsetted_yearly_dataframe<-long_subsetted_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-    Total <- c()
-    for (i in 1:length(pollutants)){
-      subsetted_pollutant_dataframe <- as.data.frame(filter(subsetted_yearly_dataframe, pollutant== pollutants[i]))
-      if(nrow(subsetted_pollutant_dataframe)!=0){
-        results_dataframe_0[1,1] <- years[h]
-        results_dataframe_0[1,2] <- pollutants[i]
-        results_dataframe_0[1,3] <- unique(subsetted_pollutant_dataframe[,'oral_reference_dosage'])
-        results_dataframe_0[1,4] <- signif(mean(subsetted_pollutant_dataframe$concArg, na.rm=TRUE),3)
-        results_dataframe_0[1,5] <- signif(mean(subsetted_pollutant_dataframe$concTai, na.rm=TRUE),3)
-        results_dataframe_0[1,6] <- signif((6.78*results_dataframe_0[1,4])/65, 3)
-        results_dataframe_0[1,7] <- signif((29.76*results_dataframe_0[1,5])/65, 3)
-        results_dataframe_0[1,8] <- format(signif(results_dataframe_0[1,6]/unique(subsetted_pollutant_dataframe[,'oral_reference_dosage']),3), scientific=FALSE)
-        results_dataframe_0[1,9] <- format(signif(results_dataframe_0[1,7]/unique(subsetted_pollutant_dataframe[,'oral_reference_dosage']),3), scientific=FALSE)
-        results_dataframe_0[1,10] <- signif(quantile(subsetted_pollutant_dataframe$concArg, probs = .95, na.rm=TRUE), 3)
-        results_dataframe_0[1,11] <-signif(quantile(subsetted_pollutant_dataframe$concTai, probs = .95, na.rm=TRUE), 3)
-        results_dataframe_0[1,12] <- signif((6.78*results_dataframe_0[1,10])/65, 3)
-        results_dataframe_0[1,13] <-signif((29.76*results_dataframe_0[1,11])/65, 3)
-        results_dataframe_0[1,14] <-format(signif(results_dataframe_0[1,12]/unique(subsetted_pollutant_dataframe[,'oral_reference_dosage']),3), scientific=FALSE)
-        results_dataframe_0[1,15] <-format(signif(results_dataframe_0[1,13]/unique(subsetted_pollutant_dataframe[,'oral_reference_dosage']),3), scientific=FALSE)
-        full_results_dataframe <-rbind(full_results_dataframe, results_dataframe_0)
-      }else if (nrow(subsetted_pollutant_dataframe)==0){
-        results_dataframe_0[1,1] <- years[h]
-        results_dataframe_0[1,2] <- pollutants[i]
-        results_dataframe_0[1,3] <- recommended_levels[i,'oral_reference_dosage']
-        results_dataframe_0[1,4] <- 0
-        results_dataframe_0[1,5] <- 0
-        results_dataframe_0[1,6] <- 0
-        results_dataframe_0[1,7] <- 0
-        results_dataframe_0[1,8] <- 0
-        results_dataframe_0[1,9] <- 0
-        results_dataframe_0[1,10] <-0
-        results_dataframe_0[1,11] <-0
-        results_dataframe_0[1,12] <-0
-        results_dataframe_0[1,13] <-0
-        results_dataframe_0[1,14] <-0
-        results_dataframe_0[1,15] <-0
-        full_results_dataframe <-rbind(full_results_dataframe, results_dataframe_0) 
-      }
-    }
-    #Using for loop to full in empty dataframe 2 (Total Hazard Qutotient ALL pollutants per country) by conducting descriptive stats and EDI calculations for Argentina and Taiwan.
-    colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-    results_dataframe_1[1,1] <- years[h]
-    results_dataframe_1[1,2] <- 'Total_HQ'
-    results_dataframe_1[1,3] <- NA
-    results_dataframe_1[1,4] <- signif(sum(as.numeric(full_results_dataframe[,4]), na.rm = T),3)
-    results_dataframe_1[1,5] <- signif(sum(as.numeric(full_results_dataframe[,5]), na.rm = T),3)
-    results_dataframe_1[1,6] <- signif(sum(as.numeric(full_results_dataframe[,6]), na.rm = T),3)
-    results_dataframe_1[1,7] <- signif(sum(as.numeric(full_results_dataframe[,7]), na.rm = T),3)
-    results_dataframe_1[1,8] <- signif(sum(as.numeric(full_results_dataframe[,8]), na.rm = T),3)
-    results_dataframe_1[1,9] <- signif(sum(as.numeric(full_results_dataframe[,9]), na.rm = T),3)
-    results_dataframe_1[1,10] <- signif(sum(as.numeric(full_results_dataframe[,10]), na.rm = T),3)
-    results_dataframe_1[1,11] <-signif(sum(as.numeric(full_results_dataframe[,11]), na.rm = T),3)
-    results_dataframe_1[1,12] <- signif(sum(as.numeric(full_results_dataframe[,12]), na.rm = T),3)
-    results_dataframe_1[1,13] <-signif(sum(as.numeric(full_results_dataframe[,13]), na.rm = T),3)
-    results_dataframe_1[1,14] <-signif(sum(as.numeric(full_results_dataframe[,14]), na.rm = T),3)
-    results_dataframe_1[1,15] <-signif(sum(as.numeric(full_results_dataframe[,15]), na.rm = T),3)
+    # creating and saving names for plots within the lists
+    name1 <- paste(year,"_HQbarplots", sep = "")
+    name2 <- paste(year,"_TotalHQ", sep = "")
+    list12names <- append(list12names,name1)
+    list12names <- append(list12names,name2)
+   
     
-    full_results_dataframe1 <-rbind(full_results_dataframe1, results_dataframe_1)
-    subsetted_yearly_dataframe1 <- as.data.frame(full_results_dataframe %>% pivot_longer(cols = all_of(colz), names_to = "countries", values_to = "values"))
-    subsetted_yearly_dataframe1.1 <- as.data.frame(full_results_dataframe1 %>% pivot_longer(cols = all_of(colz), names_to = "countries", values_to = "values"))
-    #print(full_results_dataframe)
-    subsetted_yearly_dataframe1[,13] <- as.numeric(subsetted_yearly_dataframe1[,13])
-    
-    #Target Hazard Quotient 2 function for THQ calculation 
-    THQcalc2 <- function(x){
-      for (i in 1:nrow(x)){
-        if(is.infinite(x[i,'values'])|is.nan(x[i,'values'])|is.na(x[i,'values'])){
-          x[i,'values'] <- 0
-        }else{
-          x[i,'values'] <- x[i,'values']
-        }
-      }
-      return(x)
-    }
-    
-    subsetted_yearly_dataframe2 <-THQcalc2(subsetted_yearly_dataframe1)
-    subsetted_yearly_dataframe2.1 <-THQcalc2(subsetted_yearly_dataframe1.1)
-    
-    #Creating y axis scales for plotting
-    y_axis_upper_limit <- get_y_axis_upper_limit(subsetted_yearly_dataframe)
-    y_scales <- rbind(y_scales, y_axis_upper_limit)
-    if(nrow(y_scales)!=0){
-      y_scales_df <- y_scales
-    }else{
-      Year <- years[h]
-      pollutant <- pollutants[i]
-      y_axis_upper_limit <- 0
-      y_scales2 <- data.frame(Year, y_axis_upper_limit)
-      y_scales_df <- y_scales2 
-    }
-    df_scales <- data.frame(
-      Year = c("2019", "2020", "2021"),
-      ymin = c(0, 0, 0),
-      ymax = c(NA),
-      n = c(5, 5, 5))
-    
-    df_scales %<>% inner_join(y_scales_df, by= "Year") %>%
-      mutate(ymax = coalesce(y_axis_upper_limit)) %>%select(Year, ymin, ymax, n)
-    
-    df_scales <- split(df_scales, df_scales$Year)
-    scales <- lapply(df_scales, function(x) {
-      scale_y_continuous(limits = c(x$ymin, x$ymax), n.breaks = x$n)
-    })
-    # Determine pollutant range and subset the dataset based on its presence----
-    if (grepl("Metal", colnames(dataset_with_numerical_values)[16])) {
-      if(years[h]=='2019'){
-        subsetted_yearly_dataframe19 <-subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-        subsetted_yearly_dataframe19.1 <-subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h])
-        pollutant_levels=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E")
-        plt1 <- ggplot(subsetted_yearly_dataframe19, aes(x=factor (pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')
-        list0<-append(list(plt1),list0, 0)
-        name0 <- paste(years[h],"HQbarplots", sep = "")
-        list0names <- append(list0names,name0)
-        #for total 2019----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt2 <- ggplot(subsetted_yearly_dataframe19.1, aes(x=factor (countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list0<-append(list(plt2),list0, 0)
-        name0 <- paste(years[h],"TotalHQ", sep = "")
-        list0names <- append(list0names,name0)
-      }else if (years[h]=='2020'){
-        subsetted_yearly_dataframe20 <-as.data.frame(subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h]))
-        subsetted_yearly_dataframe20.1 <-as.data.frame(subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h]))
-        pollutant_levels=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E")
-        plt3 <- ggplot(subsetted_yearly_dataframe20, aes(x=factor(pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')
-        list1<-append(list(plt3),list1, 0)
-        name1 <- paste(years[h],"HQbarplots", sep = "")
-        list1names <- append(list1names,name1)
-        #For 2020 total----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt4 <- ggplot(subsetted_yearly_dataframe20.1, aes(x=factor(countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list1<-append(list(plt4),list1, 0)
-        name1 <- paste(years[h],"TotalHQ", sep = "")
-        list1names <- append(list1names,name1)
-      }else{
-        subsetted_yearly_dataframe21 <-subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-        subsetted_yearly_dataframe21.1 <-subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h])
-        pollutant_levels=c("Metal_F","Metal_G","Metal_B","Metal_D","Metal_A","Metal_H","Metal_C","Metal_J","Metal_I","Metal_E")
-        plt5 <- ggplot(subsetted_yearly_dataframe21, aes(x= factor(pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')
-        list2<-append(list(plt5),list2, 0)
-        name2 <- paste(years[h],"HQbarplots", sep = "")
-        list2names <- append(list2names,name2)
-        #For total 2021----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt6 <- ggplot(subsetted_yearly_dataframe21.1, aes(x= factor(countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Trace Metals", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list2<-append(list(plt6),list2, 0)
-        name2 <- paste(years[h],"TotalHQ", sep = "")
-        list2names <- append(list2names,name2)
-      }
-    }else{
-      if(years[h]=='2019'){
-        subsetted_yearly_dataframe19 <-subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-        subsetted_yearly_dataframe19.1 <-subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h])
-        pollutant_levels <- c("Organic_A","Organic_B","Organic_C","Organic_D", "Total_HQ")
-        plt1 <- ggplot(subsetted_yearly_dataframe19, aes(x=factor (pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list0<-append(list(plt1),list0, 0)
-        name0 <- paste(years[h],"HQbarplots", sep = "")
-        list0names <- append(list0names,name0)
-        #for total 2019----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt2 <- ggplot(subsetted_yearly_dataframe19.1, aes(x=factor (countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list0<-append(list(plt2),list0, 0)
-        name0 <- paste(years[h],"TotalHQ", sep = "")
-        list0names <- append(list0names,name0)
-      }else if (years[h]=='2020'){
-        subsetted_yearly_dataframe20 <-subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-        subsetted_yearly_dataframe20.1 <-subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h])
-        pollutant_levels <- c("Organic_A","Organic_B","Organic_C","Organic_D", "Total_HQ")
-        plt3 <- ggplot(subsetted_yearly_dataframe20, aes(x=factor(pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list1<-append(list(plt3),list1, 0)
-        name1 <- paste(years[h],"HQbarplots", sep = "")
-        list1names <- append(list1names,name1)
-        #For 2020 total----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt4 <- ggplot(subsetted_yearly_dataframe20.1, aes(x=factor(countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list1<-append(list(plt4),list1, 0)
-        name1 <- paste(years[h],"TotalHQ", sep = "")
-        list1names <- append(list1names,name1)
-      }else{
-        subsetted_yearly_dataframe21 <-subsetted_yearly_dataframe2 %>% group_by(pollutant) %>% subset(Year == years[h])
-        subsetted_yearly_dataframe21.1 <-subsetted_yearly_dataframe2.1 %>% group_by(pollutant) %>% subset(Year == years[h])
-        pollutant_levels <- c("Organic_A","Organic_B","Organic_C","Organic_D", "Total_HQ")
-        plt5 <- ggplot(subsetted_yearly_dataframe21, aes(x= factor(pollutant, levels=pollutant_levels), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 75))
-        list2<-append(list(plt5),list2, 0)
-        name2 <- paste(years[h],"HQbarplots", sep = "")
-        list2names <- append(list2names,name2)
-        #For total 2021----
-        colz <- c('Argentina HQ (mean)','Taiwan HQ (mean)','Argentina HQ (95th percentile)', 'Taiwan HQ (95th percentile)')
-        plt6 <- ggplot(subsetted_yearly_dataframe21.1, aes(x= factor(countries, levels=colz), y=values, fill=countries)) +
-          geom_bar(stat='summary',color="black", position=position_dodge(), width = 0.90) + 
-          coord_cartesian(ylim = c(0, 1.5))+
-          coord_cartesian(expand = FALSE)+
-          geom_hline(yintercept=1, linetype="dashed", color = "red")+
-          labs(title = paste(years[h], 'Total Hazard Quotient(HQ)',sep =" "), y = "General Population HQ values", x = "Organic Compounds", fill= ' Countries')+ theme(axis.text.x = element_text(colour = 'black', angle = 90))
-        list2<-append(list(plt6),list2, 0)
-        name2 <- paste(years[h],"TotalHQ", sep = "")
-        list2names <- append(list2names,name2)
-      }
+     # naming the items in the sublists that are within the last list
+    if (year == "2019") {
+    names(list0)<-list12names
+    # subsetting the all_results datasets for 2019 data
+    all_results19 <- subset(all_results, Year == '2019')
+    # saving and naming the 2019 all_results datasets within the last list
+    list3<-append(list(all_results19),list3, 0)
+    name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
+    names(list3)<-name3
+    } else if (year == "2020") {
+    names(list1)<-list12names
+    # subsetting the all_results datasets for 2020 data
+    all_results20 <- subset(all_results, Year == '2020')
+    # saving and naming the 2020 all_results datasets within the last list
+    list3<-append(list(all_results20),list3, 0)
+    name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
+    names(list3)<-name3
+    } else if (year == "2021") {
+    names(list2)<-list12names
+    # subsetting the all_results datasets for 2021
+    all_results21 <- subset(all_results21, Year == '2021')
+    # saving and naming the 2021 all_results datasets within the last list
+    list3<-append(list(all_results21),list3, 0)
+    name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
+    names(list3)<-name3
     }
   }
-  #saving dataset with results for viweing later
-  list3<-append(list(full_results_dataframe),list3, 0)
-  name3 <- paste("EDI_and_HQ_stats", sep = "")
-  list3names <- append(list3names,name3)
-  names(list0)<-list0names
-  names(list1)<-list1names
-  names(list2)<-list2names
-  names(list3)<-list3names
-  return(list (pollutant2019=list0, pollutant2020=list1, pollutant2021=list2, FullEDI_HQstats=list3 ))
+  #Naming the list and returning plots
+  return(list(pollutant2019 = list0, pollutant2020 = list1, pollutant2021 = list2, FullEDI_HQstats = list3))
+  
 }
 
-EDI_and_HQ_stats <- EDI_and_HQ_calculation(datasets_for_trace_metals, remove.zeroes = TRUE)
+EDI_and_HQ_stats <- EDI_and_HQ_calculations(datasets_for_trace_metals, remove.zeroes = TRUE)
 
+
+#Below code saves and combines multiple plots into individual PNG files. It loops through the list of plots in each year and combines the two plots into one png then saves them in their respective folders it also extracts the dataset saves it as an excel file which is converted into a table using VBA macros.
 save_custom_outputs <- function(output_list) {
-
+  
   years <- c('2019', '2020', '2021')  # Expected years
   
   for (year in years) {
@@ -711,6 +615,4 @@ save_custom_outputs <- function(output_list) {
     cat("✅ Excel file saved for year", year, "at", excel_file, "\n")
   }
 }
-
- save_custom_outputs(EDI_and_HQ_stats)
- 
+save_custom_outputs(EDI_and_HQ_stats)
