@@ -462,7 +462,7 @@ EDI_and_HQ_calculations <- function(data_list, remove.zeroes = FALSE) {
   pollutants <- colnames(df)[number_range]
   
   #Creating empty lists
-  list0 <- list(); list1 <- list(); list2 <- list(); list3 <- list()
+  list0 <- list(); list1 <- list(); list2 <- list(); list3 <- list(); list34names <- list()
   
   for (year in years) {
     #to get pollution summary per year and save it as the final df after combining the rows
@@ -470,6 +470,8 @@ EDI_and_HQ_calculations <- function(data_list, remove.zeroes = FALSE) {
     #creating list to save plots names
     list12names <- list()
     yearly_data <- calculate_yearly_summary(long_df, pollutants, year)
+    #resetting row names for yearly data
+    rownames(yearly_data) <- NULL
     all_results <-rbind(all_results, yearly_data) 
     
     #rounding all values in columns 4 to 15
@@ -507,7 +509,8 @@ EDI_and_HQ_calculations <- function(data_list, remove.zeroes = FALSE) {
     # saving and naming the 2019 all_results datasets within the last list
     list3<-append(list(all_results19),list3, 0)
     name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
-    names(list3)<-name3
+    list34names <- append(list34names,name3)
+    #names(list3)<-name3
     } else if (year == "2020") {
     names(list1)<-list12names
     # subsetting the all_results datasets for 2020 data
@@ -515,23 +518,25 @@ EDI_and_HQ_calculations <- function(data_list, remove.zeroes = FALSE) {
     # saving and naming the 2020 all_results datasets within the last list
     list3<-append(list(all_results20),list3, 0)
     name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
-    names(list3)<-name3
+    list34names <- append(list34names,name3)
     } else if (year == "2021") {
     names(list2)<-list12names
     # subsetting the all_results datasets for 2021
-    all_results21 <- subset(all_results21, Year == '2021')
+    all_results21 <- subset(all_results, Year == '2021')
     # saving and naming the 2021 all_results datasets within the last list
     list3<-append(list(all_results21),list3, 0)
     name3 <- paste(year,"_EDI_and_HQ_stats", sep = "")
-    names(list3)<-name3
+    list34names <- append(list34names,name3)
     }
   }
+  
+  names(list3)<-list34names
   #Naming the list and returning plots
   return(list(pollutant2019 = list0, pollutant2020 = list1, pollutant2021 = list2, FullEDI_HQstats = list3))
   
 }
 
-EDI_and_HQ_stats <- EDI_and_HQ_calculations(datasets_for_trace_metals, remove.zeroes = TRUE)
+EDI_and_HQ_stats <- EDI_and_HQ_calculations(datasets_for_organic_compounds, remove.zeroes = TRUE)
 
 
 #Below code saves and combines multiple plots into individual PNG files. It loops through the list of plots in each year and combines the two plots into one png then saves them in their respective folders it also extracts the dataset saves it as an excel file which is converted into a table using VBA macros.
@@ -592,7 +597,9 @@ save_custom_outputs <- function(output_list) {
     })
     
     # Process 4th sublist (data.frame)
-    df <- as.data.frame(output_list[[4]])
+    # Try to find the sublist name that contains this year
+    matching_name2 <- names(output_list[[4]])[grepl(year, names(output_list[[4]]))]
+    df <- as.data.frame(output_list[[4]][[matching_name2]])
     if (!is.data.frame(df)) {
       cat("❌ Year", year, "4th sublist is not a data frame. Skipping Excel export.\n")
       next
@@ -601,6 +608,14 @@ save_custom_outputs <- function(output_list) {
     # Write the data frame to Excel
     if (file.exists(excel_file)) {
       wb <- loadWorkbook(excel_file)
+      
+      
+      # Delete "FormattedView" sheet if exists
+      if ("FormattedView" %in% names(wb)) {
+        removeWorksheet(wb, "FormattedView")
+      }
+      
+      # Delete "summary" sheet if exists
       if ("summary" %in% tolower(names(wb))) {
         removeWorksheet(wb, names(wb)[tolower(names(wb)) == "summary"])
       }
