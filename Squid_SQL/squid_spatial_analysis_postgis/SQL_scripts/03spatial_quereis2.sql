@@ -7,11 +7,13 @@ SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)::geography;
 ---distance_to_land_table
 UPDATE distance_land
 SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)::geography;
+
+
 -- Find the closest distance_land point for each squid_catch sample
 SELECT 
     sc.sample_id,
-    sc.catch_weight,
-    sc.catch_length,
+    sc.catch_weight_g,
+    sc.catch_length_mm,
     sc.maturity_level,
     dl.area,
     dl.distance_from_Argentina_km,
@@ -111,6 +113,131 @@ WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
 ---6. Are certain areas more contaminated with metals?
 ---This compares average metal levels by area to identify hotspots for contamination.
 ---“We can flag pollution hotspots, which may align with ports, rivers, or human activity. Good for recommending mitigation or prioritizing studies.”
+
+DROP TABLE IF EXISTS contaminant_levels_table;
+CREATE TABLE contaminant_levels_table (
+    area TEXT,
+    geom geometry(Point, 4326),
+    pollutant TEXT,
+    pollutant_type TEXT,
+    concentration NUMERIC
+); 
+
+INSERT INTO contaminant_levels_table
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom,'Metal_A' AS pollutant, 'metal' AS pollutant_type, ROUND(c.Metal_A, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_B', 'metal', ROUND(c.Metal_B, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_C', 'metal', ROUND(c.Metal_C, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_D', 'metal', ROUND(c.Metal_D, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_E', 'metal', ROUND(c.Metal_E, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_F', 'metal', ROUND(c.Metal_F, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_G', 'metal', ROUND(c.Metal_G, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_H', 'metal', ROUND(c.Metal_H, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_I', 'metal', ROUND(c.Metal_I, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Metal_J', 'metal', ROUND(c.Metal_J, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Organic_A', 'organic', ROUND(c.Organic_A, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area,ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Organic_B', 'organic', ROUND(c.Organic_B, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Organic_C', 'organic', ROUND(c.Organic_C, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+
+UNION ALL
+
+SELECT c.area, ST_SetSRID(s.geom::geometry, 4326) AS geom, 'Organic_D', 'organic', ROUND(c.Organic_D, 2) AS concentration
+FROM concentrations c
+JOIN squid_catch s ON c.area = s.area
+	
+ORDER BY concentration DESC;
+---
+
+-- Add a spatial index for better QGIS performance
+CREATE INDEX contaminant_levels_geom_idx ON contaminant_levels_table USING GIST (geom);
+
+-- Register geometry columns for PostGIS metadata (optional but recommended)
+SELECT Populate_Geometry_Columns('contaminant_levels_table'::regclass);
+
+
+DROP VIEW IF EXISTS summarized_pollution_by_area;
+CREATE TABLE summarized_pollution_by_area (
+    area TEXT,
+    geom geometry(Point, 4326),
+    avg_metal NUMERIC,
+	avg_organic NUMERIC
+); 
+
+INSERT INTO summarized_pollution_by_area 
+SELECT
+  c.area,
+  s.geom::geometry,
+  AVG(CASE WHEN pollutant_type = 'metal' THEN concentration ELSE NULL END) AS avg_metal,
+  AVG(CASE WHEN pollutant_type = 'organic' THEN concentration ELSE NULL END) AS avg_organic
+FROM contaminant_levels_table c
+JOIN squid_catch s ON c.area = s.area
+GROUP BY c.area, s.geom::geometry;
+
+
+
+
+
 
 SELECT c.area, s.geom,'Metal_A' AS pollutant, 'metal' AS pollutant_type, ROUND(c.Metal_A, 2) AS concentration
 FROM concentrations c
