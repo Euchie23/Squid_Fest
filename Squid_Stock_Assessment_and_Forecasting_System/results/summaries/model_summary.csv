@@ -1,0 +1,5 @@
+Model_Name,Distribution,Link_Function,Target,Notes
+LinearGAM_log_CPUE_plus_c,Normal,Identity,log(CPUE + c),Log transform with constant c to avoid log(0)
+LinearGAM_log_CPUE_plus_1,Normal,Identity,log(CPUE + 1),Log transform with +1
+GammaGAM_CPUE,Gamma,Log,CPUE,Used Gamma distribution for skewed CPUE
+TweedieGLM_CPUE,Tweedie,Log,CPUE,Tweedie GLM for zero-inflated CPUE

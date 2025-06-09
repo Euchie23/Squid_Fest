@@ -1,0 +1,5 @@
+Model,Mean_RMSE
+LinearGAM_log_cpueC,12538.32
+LinearGAM_log_cpue1,13731.36
+GammaGAM,11316.12
+TweedieGAM,11942.24

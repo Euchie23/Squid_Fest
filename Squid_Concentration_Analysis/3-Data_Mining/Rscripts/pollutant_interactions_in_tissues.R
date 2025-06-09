@@ -280,7 +280,7 @@ explore_pollutant_interactions <- function(df, metal_cols, organic_cols) {
   for (tissue in tissues) {
     
     output_folder <- file.path(
-      "Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/pollutant_interactions/", tissue
+      "Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/pollutant_interactions/"
     )
     dir_create(output_folder)
     

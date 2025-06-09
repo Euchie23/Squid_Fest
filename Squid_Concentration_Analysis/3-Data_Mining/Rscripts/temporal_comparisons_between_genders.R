@@ -964,7 +964,7 @@ return(list (boxplots_for_pollutants=list0, gender_between_years_tables=list1, g
 
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required and user has to choose between datasets_for_organic_compounds or datasets_for_trace_metals for data processing,  also choose a multiplier to help adjust the y_axis since some plots may not show results clearly due to the compression effect or scale distortion of the outliers. For example: The 0.95 means that the upper limit of the y axis will be set at 0.95 * the minimum outlier from the upper quantile for each pollutant resulting in different y axis scales for each pollutant based on their minimum upper outliers. This can be changed as user sees fit. Users also have the option to remove all zeroes and focus on only the detected concentrations or keep them. The results are saved in temporal_gender_comparisons_results list.
-gender_temporal_comparisons_results <- temporal_comparisons_between_genders(datasets_for_trace_metals,remove.zeroes = FALSE)
+gender_temporal_comparisons_results <- temporal_comparisons_between_genders(datasets_for_organic_compounds,remove.zeroes = FALSE)
 
 
 
@@ -974,9 +974,9 @@ save_graphs <- function(graph_list) {
   
   # Define the folder where you want to save the PNG files 
   if (grepl("Metal", names(graph_list[["boxplots_for_pollutants"]])[[1]])) {
-    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal_gender_comparisons/Trace_metals")
+    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal_gender_comparisons")
   }else{
-    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal_gender_comparisons/Organic_compounds")  
+    output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal_gender_comparisons")  
   }
   
   # Create the folder if it doesn't exist

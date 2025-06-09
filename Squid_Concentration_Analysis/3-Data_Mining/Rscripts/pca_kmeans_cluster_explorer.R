@@ -278,13 +278,15 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
     number_range <- 16:25
     vars <- c('Metal_H', "Metal_I")
     output_folder <- "Trace_metals"
+    plts <- 'trace_metals'
   } else {
     number_range <- 16:19
     vars <- c("Organic_C")
     output_folder <- "Organic_compounds"
+    plts <- 'organic_compounds'
   }
   
-  output_folder <- file.path("Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/pca_kmeans_clusters/", output_folder)
+  output_folder <- file.path("Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/pca_kmeans_clusters/")
   dir.create(output_folder, recursive = TRUE, showWarnings = FALSE)
   
   # Loop through each tissue and year
@@ -293,7 +295,7 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
   
   for (tissue in tissues) {
     
-    tissue_folder <- file.path(output_folder, tissue)
+    tissue_folder <- file.path(output_folder)
     dir.create(tissue_folder, recursive = TRUE, showWarnings = FALSE)
     
     # Select variables and remove unwanted ones if needed
@@ -384,7 +386,7 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
       theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold"))
     
     # Save PNG
-    png(file.path(tissue_folder, paste0(tissue, "_All_Years_PCA_KMeans_Boxplot.png")), width = 1800, height = 1200)
+    png(file.path(tissue_folder, paste0(plts, '_', tissue,"_All_Years_PCA_KMeans_Boxplot.png")), width = 1800, height = 1200)
     grid.arrange(biplot_all, kmeans_biplot_all, boxplot_all, kw_text_plot_all, ncol = 2)
     dev.off()
     
@@ -458,7 +460,7 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
         labs(title = "Kruskal-Wallis P-values") +
         theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold"))
       
-      png(file.path(tissue_folder, paste0(tissue, "_", year, "_PCA_KMeans_Boxplot.png")), width = 1800, height = 1200)
+      png(file.path(tissue_folder, paste0(plts, '_', tissue, "_", year, "_PCA_KMeans_Boxplot.png")), width = 1800, height = 1200)
       grid.arrange(pca_biplot, kmeans_biplot, boxplot_year, kw_text_plot, ncol = 2)
       dev.off()
     }
@@ -467,4 +469,4 @@ pca_kmeans_cluster_explorer <- function(data_list, remove.vars = FALSE) {
 
 
 # Call the function 
-pca_kmeans_cluster_explorer(datasets_for_trace_metals, remove.vars = TRUE)
+pca_kmeans_cluster_explorer(datasets_for_organic_compounds, remove.vars = TRUE)

@@ -840,20 +840,20 @@ comparing_sizes_per_pollutant <- function (data_list, variable, remove.zeroes = 
 
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required and user has to choose between datasets_for_organic_compounds or datasets_for_trace_metals. The user also has the option of choosing between three variables mainly Month_of_Capture, dta_km(distance to Argentina_km) and dtfl_km(distance to the Falkland Islands_km) to show how pollution levels change in different tissues of the squid depending on the aforementioned three variables. Users can also remove all zeroes and focus on only the detected concentrations or keep them. The results are saved in size_comparison_results list. Variable can only be either 'dta_km','dtfl_km' or 'Month_of_Capture'
-size_comparison_results_per_pollutant <- comparing_sizes_per_pollutant (datasets_for_trace_metals, variable='Month_of_Capture', remove.zeroes = FALSE) 
+size_comparison_results_per_pollutant <- comparing_sizes_per_pollutant (datasets_for_organic_compounds, variable='Month_of_Capture', remove.zeroes = FALSE) 
 #Below code saves multiple plots into individual PNG files. It loops through the list of plots and and for each plot it extracts its name, and the plot then saves it in one .png file using grid.draw()
 save_graphs <- function(graph_list) {
   
 # Extract pollutant types from the first available plot  
-plot_name <- names(graph_list[["graphs"]])[[1]]
-variable_name <- sub(".*_plot_", "", plot_name)  
+# plot_name <- names(graph_list[["graphs"]])[[1]]
+# variable_name <- sub(".*_plot_", "", plot_name)  
   
   
 # Define the folder where you want to save the PNG files 
 if (grepl("Metal", names(graph_list[["graphs"]])[[1]])) {
-output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/size_comparison_per_pollutant/Trace_metals",variable_name)
+output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/size_comparison_per_pollutant")
 }else{
-output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/size_comparison_per_pollutant/Organic_compounds",variable_name)  
+output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/size_comparison_per_pollutant")  
 }
 
 # Create the folder if it doesn't exist

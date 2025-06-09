@@ -1,0 +1,24 @@
+{
+  "labels": {
+    "Actual": {
+      "marker": "circle",
+      "color": "#1f77b4"
+    },
+    "Predicted (LinearGAM_log_CPUE_plus_c)": {
+      "marker": "square",
+      "color": "#ff7f0e"
+    },
+    "Predicted (LinearGAM_log_CPUE_plus_1)": {
+      "marker": "triangle",
+      "color": "#2ca02c"
+    },
+    "Predicted (GammaGAM_CPUE)": {
+      "marker": "x",
+      "color": "#d62728"
+    },
+    "Predicted (TweedieGLM_CPUE)": {
+      "marker": "cross",
+      "color": "#9467bd"
+    }
+  }
+}

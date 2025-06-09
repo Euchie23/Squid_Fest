@@ -579,6 +579,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
     dataset_with_numerical_values <- dataset_with_numerical_values %>%
       select(any_of(setdiff(names(.), cols_to_sort)), all_of(sorted_cols))
     range <- colnames(dataset_with_numerical_values[16:25])
+    plts <- 'trace_metals'
   } else {
     # Organic compounds subset
     icons_oc <- apply(OCicons, 1, markdown_function_for_OC_icons)
@@ -593,6 +594,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
     dataset_with_numerical_values <- dataset_with_numerical_values %>%
       select(any_of(setdiff(names(.), cols_to_sort)), all_of(sorted_cols))
     range <- colnames(dataset_with_numerical_values[16:19])
+    plts <- 'organic_compunds'
   }
   
   # Step 3: Loop through subsetted dataset and variables for further analysis 
@@ -799,7 +801,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)}
           list0<-append(list(plt),list0, 0)
-          name0 <- paste(variable,"_plots_", year[h], sep = "")
+          name0 <- paste(plts,"_", variable,"_plots_", year[h], sep = "")
           list0names <- append(list0names,name0)
         }else{
           #print(str(plotting_dataset))
@@ -824,7 +826,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             # Optional p-value text
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)}
           list0<-append(list(plt),list0, 0)
-          name0 <- paste(variable,"_plots_", year[h], sep = "")
+          name0 <- paste(plts,"_", variable,"_plots_", year[h], sep = "")
           list0names <- append(list0names,name0)
         }
       }else if(year[h]=='2020'){
@@ -846,7 +848,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)}
           list1<-append(list(plt),list1, 0)
-          name1 <- paste(variable,"_plots_", year[h], sep = "")
+          name1 <- paste(plts,"_", variable,"_plots_", year[h], sep = "")
           list1names <- append(list1names,name1)
         }else{
           #print(str(plotting_dataset))
@@ -871,7 +873,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             # Optional p-value text
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)}
           list1<-append(list(plt),list1, 0)
-          name1 <- paste(variable,"_plots_", year[h], sep = "")
+          name1 <- paste(plts,"_", variable,"_plots_", year[h], sep = "")
           list1names <- append(list1names,name1)
         }
       }else{
@@ -893,7 +895,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             )+
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)} 
           list2<-append(list(plt),list2, 0)
-          name2 <- paste(variable,"_plots_", year[h], sep = "")
+          name2 <- paste(plts,"_", variable,"_plots_", year[h], sep = "")
           list2names <- append(list2names,name2)
         }else{
           plt <-plotting_dataset %>% ggplot(aes(Values, concentrations, colour = Tissue, group=Tissue)) +
@@ -917,7 +919,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
             # Optional p-value text
             {if(nrow(pvalues)!=0) geom_text(pvalues, mapping=aes(label=paste(rho, pvalues, sep= ",")),hjust =0, size = 3.5, fontface="italic", position = position_dodge(width = .1), check_overlap = FALSE)}
           list2<-append(list(plt),list2, 0)
-          name2 <- paste(variable,"_plots_", year[h], sep = "")
+          name2 <- paste(plts,"_",variable,"_plots_", year[h], sep = "")
           list2names <- append(list2names,name2)
         }
       }
@@ -932,7 +934,7 @@ comparing_tissues_per_year_per_variable <- function (data_list, remove.zeroes = 
 }
 
 #Calling Main Function. All arguments except remove.zeroes (default is set at False) are required. Users can also remove all zeroes and focus on only the detected concentrations or keep them.The user also has to choose between datasets_for_organic_compounds or datasets_for_trace_metals.The results are saved in temporal_comparison_results_per_tissue.
-temporal_tissue_variable_analysis <- comparing_tissues_per_year_per_variable(datasets_for_organic_compounds,remove.zeroes = FALSE)
+temporal_tissue_variable_analysis <- comparing_tissues_per_year_per_variable(datasets_for_trace_metals,remove.zeroes = FALSE)
 
 #Below code saves multiple plots into individual PNG files. It loops through the list of plots and and for each plot it extracts the tissue name, and the plots for that tissue then saves them in their respective tissue folders.
 save_graphs <- function(graph_list) {
@@ -953,9 +955,9 @@ save_graphs <- function(graph_list) {
     
     # Define the folder where you want to save the PNG files for each tissue
     if (any(grepl("Metal", pollutant_types))) {
-      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis/Trace_metals", year)
+      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis")
     } else {
-      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis/Organic_compounds", year)
+      output_folder <- file.path("/Users/mrnobody/Documents/GitHub/Squid_Fest/Squid_Concentration_Analysis/3-Data_Mining/Data_mining_plots/temporal-tissue_variable_analysis")
     }
     
     # Create the output folder if it doesn't exist
@@ -969,10 +971,10 @@ save_graphs <- function(graph_list) {
       plot_object <- year_sublist[[i]]
       
       cat("\n----------\n")
-      cat("Checking:", year, "_", plot_name, "\n")
+      cat("Checking:",plot_name, "\n")
       
       # Construct output path for each plot
-      output_path <- file.path(output_folder, paste0(year, "_", plot_name, ".png"))
+      output_path <- file.path(output_folder, paste0(plot_name, ".png"))
       
       # Ensure any open devices are closed before starting new plot saving
       if (!is.null(dev.list())) {
